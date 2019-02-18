@@ -65,6 +65,40 @@ def transform_mac(original_mac):
     
     return new_mac
 
+def transform_mac_def(original_mac):
+    original_mac = original_mac.lower()
+    alpha_num_mac = ""
+    for c in original_mac:
+        if c.isalnum():
+            alpha_num_mac = alpha_num_mac + c
+    
+    i = 0
+    new_mac = ""
+    for c in alpha_num_mac:
+        if i % 4 == 0 and i != 0:
+            new_mac = new_mac + '-'
+        new_mac = new_mac + c
+        i = i + 1
+    
+    return new_mac
+
+def transform_mac_2p(original_mac):
+    original_mac = original_mac.lower()
+    alpha_num_mac = ""
+    for c in original_mac:
+        if c.isalnum():
+            alpha_num_mac = alpha_num_mac + c
+
+    i = 0
+    new_mac = ""
+    for c in alpha_num_mac:
+        if i % 2 == 0 and i != 0:
+            new_mac = new_mac + ':'
+        new_mac = new_mac + c
+        i = i + 1
+    
+    return new_mac
+
 def debug_log(verbose_data):
     if DEBUG:
         print (verbose_data)
