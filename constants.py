@@ -1,0 +1,25 @@
+MAX_PORTS = 128
+REG_EXP_FOR_MAC = r"((([0-9A-Fa-f]{2}[:.-]){5}([0-9A-Fa-f]{2}))|(([0-9A-Fa-f]{4}[:.-]){2}[0-9A-Fa-f]{4}))"
+
+ADMIN_UP = "Enabled"
+ADMIN_DOWN = "Disabled"
+LINK_UP = "up"
+LINK_DOWN = "down"
+MAC_EXIST = "mac exist"
+MAC_NO = "no MAC"
+NO_DESCRIPTION = "description not set"
+ARP_DYNAMIC = "D"
+ARP_UP = "up"
+ARP_DOWN = "down"
+
+UPDATE_LINK = "Обновить линк"
+UPDATE_ADMIN = "Обновить админ. состояние"
+UPDATE_LINK_AND_ADMIN = "Обновить линк и адм. состояние"
+UPDATE_MAC = "Обновить мак"
+UPDATE_DESCRIPTION = "Обновить описание"
+UPDATE_ARP = "Обновить арпы"
+ARP_UNKNOWN = "Недоступно"
+PORT_ENABLE = "Поднять порт"
+PORT_DISABLE = "Сложить порт"
+REBOOT_ONU = "Бутнуть ONU"
+
