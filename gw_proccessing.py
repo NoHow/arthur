@@ -9,13 +9,13 @@ def get_connection(sw_ip):
     gw_ip = first_octets + "1"
     vendor = ug.get_gateway_vendor(gw_ip)
 
-    if vendor == vd.Gateway.CISCO.name.lower():
+    if vendor == vd.Gateway.CISCO.name:
         user = "support"
         password = "ytyfljkf[vfnbnm,f,eire"
-    elif vendor == vd.Gateway.ZTE.name.lower() or vendor == vd.Gateway.JUNIPER.name.lower():
+    elif vendor == vd.Gateway.ZTE.name or vendor == vd.Gateway.JUNIPER.name:
         user = "duty"
         password = "support"
-    elif vendor == vd.Gateway.HUAWEI.name.lower():
+    elif vendor == vd.Gateway.HUAWEI.name:
         user = "duty"
         password = "support1"
     
@@ -27,17 +27,17 @@ def get_connection(sw_ip):
 def show_arp_by_mac(tn_gw, vendor, mac):
     tmac = tls.transform_mac(mac)
 
-    if vendor == vd.Gateway.CISCO.name.lower():
+    if vendor == vd.Gateway.CISCO.name:
         tls.send_taska(tn_gw, "show arp | include " + tmac)
         return 1
-    elif vendor == vd.Gateway.ZTE.name.lower():
+    elif vendor == vd.Gateway.ZTE.name:
         tls.send_taska(tn_gw, "show arp dynamic | include " + tmac)
         return 1
-    elif vendor == vd.Gateway.JUNIPER.name.lower():
+    elif vendor == vd.Gateway.JUNIPER.name:
         jmac = tls.transform_mac_2p(tmac)
         tls.send_taska(tn_gw, "show arp | match " + jmac)
         return 1
-    elif vendor == vd.Gateway.HUAWEI.name.lower():
+    elif vendor == vd.Gateway.HUAWEI.name:
         hmac = tls.transform_mac_def(tmac)
         tls.send_taska(tn_gw, "display arp dynamic | include " + hmac)
         return 1

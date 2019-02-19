@@ -9,6 +9,7 @@ password = "osinkii"
 
 def zte_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
+    time.sleep(1)
     
     sport = str(port)
     tls.send_taska(tl, "enable")
@@ -111,13 +112,13 @@ def zte_init(tl, sw_ip, port):
     static_t.grid(column=15, row=100, sticky='w')
 
     #LINE 2
-    dhcp_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_dhcp)
+    dhcp_t = tk.Button(window, text="Show dhcp", font=("Helvetica", 10), command=show_dhcp)
     dhcp_t.grid(column=20, row=10, sticky='w')
-    lease_all_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
     lease_all_t.grid(column=20, row=20, sticky='w')
-    log_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_log)
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
     log_t.grid(column=20, row=30, sticky='w')
-    all_down_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_all_down)
+    all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
     all_down_t.grid(column=20, row=40, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
@@ -188,12 +189,29 @@ def cisco_init(tl, sw_ip, port):
         tls.send_task(tl, "no shutdown")
         tls.send_taska(tl, "end")
 
-    def neigh_port_boot():
-        tls.send_task(tl, "configurtion")
-        tls.send_taska(tl, "interface ethernet " + 'e' + switch_port_data.get())
-        tls.send_taska(tl, "shutdown")
-        time.sleep(4)
-        tls.send_taska(tl, "no shutdown")
+    def dhcp_on():
+        tls.send_task(tl, "ip dhcp snooping")
+        tls.send_task(tl, "ip dhcp information option")
+        tls.send_task(tl, "no ip dhcp snooping database")
+        tls.send_task(tl, "ip dhcp snooping vlan " + vlan_data_bind.get())
+        tls.send_task(tl, "ip arp inspection")
+        tls.send_task(tl, "ip arp inspection validate")
+        tls.send_task(tl, "ip arp inspection vlan " + vlan_data_bind.get())
+        tls.send_task(tl, "ip source-guard")
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "interface ethernet" + sport)
+        tls.send_task(tl, "ip source-guard")
+        tls.send_task(tl, "no ip arp inspection trust")
+        tls.send_task(tl, "no ip dhcp snooping trust")
+        tls.send_taska(tl, "end")
+    def static_bind():
+        tls.send_task(tl, "configure")
+        tls.send_taska(tl, "ip source-guard binding " + mac_data_bind.get() + " " + vlan_data_bind.get() + " " +  ip_data_bind.get() + " ethernet " + sport)
+        tls.send_taska(tl, "end")
+    def static_bind_remove():
+        tls.send_task(tl, "configure")
+        tls.send_taska(tl, "no ip source-guard binding " + mac_data_bind.get() + " " + vlan_data_bind.get())
+        tls.send_taska(tl, "end")
 
     #LINE 2
     def show_lease_all():
@@ -202,6 +220,12 @@ def cisco_init(tl, sw_ip, port):
         tls.send_taska(tl, "show log", 2)
     def show_all_down():
         tls.send_taska(tl, "show interface configuration")
+    def neigh_port_boot():
+        tls.send_task(tl, "configurtion")
+        tls.send_taska(tl, "interface ethernet " + 'e' + switch_port_data.get())
+        tls.send_taska(tl, "shutdown")
+        time.sleep(4)
+        tls.send_taska(tl, "no shutdown")
 
     #lINE 3
     def show_more():
@@ -242,19 +266,26 @@ def cisco_init(tl, sw_ip, port):
     line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
     line2.grid(column=10, row=110, sticky='w', pady='0.3m')
 
-    dhcp_t = tk.Button(window, text="DHCP", font=("Helvetica", 10), command=dhcp_on)
+    dhcp_t = tk.Button(window, text="DHCP config", font=("Helvetica", 10), command=dhcp_on)
     dhcp_t.grid(column=10, row=120, sticky='w')
 
     static_bind = tk.Button(window, text="Static bind", font=("Helvetica", 10), command=static_bind)
-    static_bind.grid(column=10, row=130, sticky='w')
-    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
-    link_t.grid(column=20, row=50, sticky='w')
-    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
-    switch_port_data.grid(column=25, row=50, sticky='w')
-    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
-    link_t.grid(column=20, row=50, sticky='w')
-    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
-    switch_port_data.grid(column=25, row=50, sticky='w')
+    static_bind.grid(column=10, row=120, sticky='w')
+    static_bind_remove = tk.Button(window, text="Static bind", font=("Helvetica", 10), command=static_bind_remove)
+    static_bind_remove.grid(column=15, row=120, sticky='w')
+    mac_info_bind = tk.Label(window, text="MACb", font=("Helvetica", 10))
+    mac_info_bind.grid(column=10, row=130, sticky='w')
+    mac_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
+    mac_data_bind.grid(column=15, row=130, sticky='w')
+    mac_data_bind.insert(0, "ff:ff:ff:ff:ff:ff")
+    ip_info_bind = tk.Label(window, text="IPb", font=("Helvetica", 10))
+    ip_info_bind.grid(column=10, row=140, sticky='w')
+    ip_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
+    ip_data_bind.grid(column=15, row=140, sticky='w')
+    vlan_info_bind = tk.Label(window, text="VLANb", font=("Helvetica", 10))
+    vlan_info_bind.grid(column=10, row=150, sticky='w')
+    vlan_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
+    vlan_data_bind.grid(column=15, row=150, sticky='w')
     
     #LINE 2
     lease_all_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_lease_all)
