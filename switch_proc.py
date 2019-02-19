@@ -12,7 +12,8 @@ def zte_init(tl, sw_ip, port):
     time.sleep(1)
     
     sport = str(port)
-    tls.send_taska(tl, "enable")
+    tl.write("enable".encode('ascii') + b"\r\n")
+    tl.write("rbnfqcrbqbynthyt".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "rbnfqcrbqbynthyt")
     tls.send_taska(tl, "show port " + sport)
     tls.send_taska(tl, "show port " + sport + " statistics")
@@ -45,7 +46,7 @@ def zte_init(tl, sw_ip, port):
 
     def dhcp_on():
         tls.send_taska(tl, "set dhcp snooping-and-option82 enable")
-        tls.send_taska(tl, "set port $port acl " + sport + " dis")
+        tls.send_taska(tl, "set port" + sport + " acl " + sport + " dis")
         tls.send_taska(tl, "set dhcp port " +  sport + " client")
         tls.send_taska(tl, "set dhcp snooping add por t" + sport)
         tls.send_taska(tl, "set dhcp ip-source-guard add port " + sport)
@@ -67,14 +68,16 @@ def zte_init(tl, sw_ip, port):
         tls.send_taska(tl, "show ports")
     
     def neigh_port_boot():
-        tls.send_taska(tl, "set port " + switch_port_data.get() + " disable")
+        tmp_data = switch_port_data.get()
+        print(tmp_data)
+        tls.send_taska(tl, "set port " + tmp_data + " disable")
         time.sleep(4)
-        tls.send_taska(tl, "set port " + switch_port_data.get() + " enable")
+        tls.send_taska(tl, "set port " + tmp_data + " enable")
 
     #lINE 3
     def show_more():
         tls.send_taska(tl, " ")
-    def cancel():
+    def cancel():   
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
@@ -130,20 +133,22 @@ def zte_init(tl, sw_ip, port):
     switch_port_data.grid(column=25, row=60, sticky='w')
 
     #LINE 3
-    more_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_more)
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
-    cancel_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=cancel)
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
     cancel_t.grid(column=30, row=20, sticky='w')
-    interact_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=interact)
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
     link_t.grid(column=40, row=10, sticky='w')
-    mac_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
 
     window.mainloop()
+    gateway['connection'].close()
 
 
 #CISCO
@@ -280,8 +285,9 @@ def cisco_init(tl, sw_ip, port):
     mac_data_bind.insert(0, "ff:ff:ff:ff:ff:ff")
     ip_info_bind = tk.Label(window, text="IPb", font=("Helvetica", 10))
     ip_info_bind.grid(column=10, row=140, sticky='w')
-    ip_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
+    ip_data_bind = tk.Entry(window, font=("Helvetica", 10), width=5)
     ip_data_bind.grid(column=15, row=140, sticky='w')
+    ip_data_bind.insert(0, "xxx.xxx.xxx.xxx")
     vlan_info_bind = tk.Label(window, text="VLANb", font=("Helvetica", 10))
     vlan_info_bind.grid(column=10, row=150, sticky='w')
     vlan_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
@@ -304,17 +310,359 @@ def cisco_init(tl, sw_ip, port):
     switch_port_data.grid(column=25, row=50, sticky='w')
 
     #LINE 3
-    more_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_more)
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
-    cancel_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=cancel)
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
     cancel_t.grid(column=30, row=20, sticky='w')
-    interact_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=interact)
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
     link_t.grid(column=40, row=10, sticky='w')
-    mac_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
 
     window.mainloop()
+    gateway['connection'].close()
+
+def dlink_3200_init(tl, sw_ip, port):
+    tls.login_try(tl, user, password)
+    
+    sport = str(port)
+    tls.send_taska(tl, "show ports " + sport)
+    tls.send_taska(tl, "show fdb " + sport)
+
+    gateway = gwp.get_connection(sw_ip)
+
+    window = tk.Tk()
+    window.title("D-LINK-3200 | PORT: " + sport)
+    
+    #LINE 1
+    def show_link():
+        tls.send_taska(tl, "show ports " + sport)
+    def show_description():
+        tls.send_taska(tl, "show ports " + sport + " description")
+    def show_statistics():
+        tls.send_taska(tl, "show error ports " + sport)
+    def show_mac():
+        tls.send_taska(tl, "show fdb " + sport)
+    def test_cable():
+        tls.send_taska(tl, "cable_diag ports " + sport, 1)
+    def show_config():
+        tls.send_taska(tl, "show address_binding ports " + sport)
+
+    def port_off():
+        tls.send_task(tl, "config ports " + sport + " state disable")
+    def port_on():
+        tls.send_task(tl, "config ports " + sport + " state enable")
+
+    def ip_inspection_on():
+        tls.send_taska(tl, "config address_binding ports " + sport + " ip_inspection enable")
+    def ip_inspection_off():
+        tls.send_taska(tl, "config address_binding ports " + sport + " ip_inspection disable")
+    def arp_inspection_on():
+        tls.send_taska(tl, "config address_binding ports " + sport + " arp_inspection strict")
+    def arp_inspection_off():
+        tls.send_taska(tl, "config address_binding ports " + sport + " arp_inspection disable")
+    
+
+    #LINE 2
+    def show_lease_all():
+        tls.send_taska(tl, "show address_binding dhcp_snoop binding_entry")
+    def show_log():
+        tls.send_taska(tl, "show log", 2)
+    def show_all_down():
+        tls.send_taska(tl, "show ports")
+    def neigh_port_boot():
+        tls.send_taska(tl, "config ports " + switch_port_data.get() + " state disable")
+        time.sleep(4)
+        tls.send_taska(tl, "config ports " + switch_port_data.get() + " state enable")
+
+    #lINE 3
+    def show_more():
+        tls.send_taska(tl, " ")
+    def cancel():
+        tls.send_taska(tl, "q")
+    def interact():
+        tl.interact()
+
+    #LINE GATEWAY
+    def show_arp_by_mac():
+        gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+
+    #LINE 1
+    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t.grid(column=10, row=10, sticky='w')
+    desc_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_description)
+    desc_t.grid(column=10, row=20, sticky='w')
+    stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
+    stat_t.grid(column=10, row=30, sticky='w')
+    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t.grid(column=10, row=40, sticky='w')
+    cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
+    cable_t.grid(column=10, row=50, sticky='w')
+    show_config = tk.Button(window, text="Show config", font("Helvetice", 10), command=show_config)
+    show_config.grid(column=10, row=60, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=10, row=70, sticky='w', pady='0.3m')
+
+    porton_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
+    porton_t.grid(column=10, row=90, sticky='w')
+    portoff_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
+    portoff_t.grid(column=10, row=100, sticky='w')
+
+    line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line2.grid(column=10, row=110, sticky='w', pady='0.3m')
+
+    ip_i_on = tk.Button(window, text="IP inspec on", font=("Helvetica", 10), command=dhcp_on)
+    ip_i_on.grid(column=10, row=120, sticky='w')
+    ip_i_off = tk.Button(window, text="IP inspec off", font=("Helvetica", 10), command=static_bind)
+    ip_i_off.grid(column=15, row=120, sticky='w')
+    arp_i_on = tk.Button(window, text="ARP inspec on", font=("Helvetica", 10), command=static_bind_remove)
+    arp_i_on.grid(column=10, row=130, sticky='w')
+    arp_i_off = tk.Button(window, text="ARP inspec off", font=("Helvetica", 10), command=static_bind_remove)
+    arp_i_off.grid(column=15, row=130, sticky='w')
+    
+    #LINE 2
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t.grid(column=20, row=10, sticky='w')
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t.grid(column=20, row=20, sticky='w')
+    all_down_t = tk.Button(window, text="Show down", font=("Helvetica", 10), command=show_all_down)
+    all_down_t.grid(column=20, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=40, sticky='w', pady='0.3m')
+
+    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
+    link_t.grid(column=20, row=50, sticky='w')
+    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
+    switch_port_data.grid(column=25, row=50, sticky='w')
+
+    #LINE 3
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t.grid(column=30, row=10, sticky='w')
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t.grid(column=30, row=20, sticky='w')
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t.grid(column=30, row=30, sticky='w')
+
+    #GW LINE
+    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    link_t.grid(column=40, row=10, sticky='w')
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data.grid(column=45, row=10, sticky='w')
+    mac_data.insert(0, "ffff.ffff.ffff")
+
+    window.mainloop()
+    gateway['connection'].close()
+
+def dlink_3526_init(tl, sw_ip, port):
+    tls.login_try(tl, user, password)
+    
+    sport = str(port)
+    tls.send_taska(tl, "show ports " + sport)
+    tls.send_taska(tl, "show fdb " + sport)
+
+    gateway = gwp.get_connection(sw_ip)
+
+    window = tk.Tk()
+    window.title("D-LINK-3526 | PORT: " + sport)
+    
+    #LINE 1
+    def show_link():
+        tls.send_taska(tl, "show ports " + sport)
+    def show_description():
+        tls.send_taska(tl, "show ports " + sport + " description")
+    def show_statistics():
+        tls.send_taska(tl, "show error ports " + sport)
+    def show_mac():
+        tls.send_taska(tl, "show fdb " + sport)
+    def test_cable():
+        tls.send_taska(tl, "cable_diag ports " + sport, 1)
+    def show_config():
+        tls.send_taska(tl, "show address_binding ports " + sport)
+
+    def port_off():
+        tls.send_task(tl, "config ports " + sport + " state disable")
+    def port_on():
+        tls.send_task(tl, "config ports " + sport + " state enable")
+
+    def bind_state_on():
+        tls.send_taska(tl, "config address_binding ports " + sport + " state enable")
+    def bind_state_off():
+        tls.send_taska(tl, "config address_binding ports " + sport + " state disable")
+    
+
+    #LINE 2
+    def show_lease_all():
+        tls.send_taska(tl, "show address_binding dhcp_snoop binding_entry")
+    def show_log():
+        tls.send_taska(tl, "show log", 2)
+    def show_all_down():
+        tls.send_taska(tl, "show ports")
+    def neigh_port_boot():
+        tls.send_taska(tl, "config ports " + switch_port_data.get() + " state disable")
+        time.sleep(4)
+        tls.send_taska(tl, "config ports " + switch_port_data.get() + " state enable")
+
+    #lINE 3
+    def show_more():
+        tls.send_taska(tl, " ")
+    def cancel():
+        tls.send_taska(tl, "q")
+    def interact():
+        tl.interact()
+
+    #LINE GATEWAY
+    def show_arp_by_mac():
+        gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+
+    #LINE 1
+    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t.grid(column=10, row=10, sticky='w')
+    desc_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_description)
+    desc_t.grid(column=10, row=20, sticky='w')
+    stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
+    stat_t.grid(column=10, row=30, sticky='w')
+    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t.grid(column=10, row=40, sticky='w')
+    cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
+    cable_t.grid(column=10, row=50, sticky='w')
+    show_config = tk.Button(window, text="Show config", font("Helvetice", 10), command=show_config)
+    show_config.grid(column=10, row=60, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=10, row=70, sticky='w', pady='0.3m')
+
+    porton_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
+    porton_t.grid(column=10, row=90, sticky='w')
+    portoff_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
+    portoff_t.grid(column=10, row=100, sticky='w')
+
+    line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line2.grid(column=10, row=110, sticky='w', pady='0.3m')
+
+    ip_i_on = tk.Button(window, text="IP_MAC ON", font=("Helvetica", 10), command=bind_state_on)
+    ip_i_on.grid(column=10, row=120, sticky='w')
+    ip_i_off = tk.Button(window, text="IP_MAC OFF", font=("Helvetica", 10), command=bind_state_off)
+    ip_i_off.grid(column=15, row=120, sticky='w')
+    
+    #LINE 2
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t.grid(column=20, row=10, sticky='w')
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t.grid(column=20, row=20, sticky='w')
+    all_down_t = tk.Button(window, text="Show down", font=("Helvetica", 10), command=show_all_down)
+    all_down_t.grid(column=20, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=40, sticky='w', pady='0.3m')
+
+    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
+    link_t.grid(column=20, row=50, sticky='w')
+    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
+    switch_port_data.grid(column=25, row=50, sticky='w')
+
+    #LINE 3
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t.grid(column=30, row=10, sticky='w')
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t.grid(column=30, row=20, sticky='w')
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t.grid(column=30, row=30, sticky='w')
+
+    #GW LINE
+    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    link_t.grid(column=40, row=10, sticky='w')
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data.grid(column=45, row=10, sticky='w')
+    mac_data.insert(0, "ffff.ffff.ffff")
+
+    window.mainloop()
+    gateway['connection'].close()
+
+def bdcom_init(tl, sw_ip, leaf, port):
+    tls.login_try(tl, user, password)
+    time.sleep(1)
+    
+    sport = "EPON0/" + str(leaf) + ":" + str(port)
+    tl.write("enable".encode('ascii') + b"\r\n")
+    tl.write("bdcom".encode('ascii') + b"\r\n")
+    tls.send_taska(tl, "show interface " + sport)
+    tls.send_taska(tl, "show mac address-table interface " + sport)
+
+    gateway = gwp.get_connection(sw_ip)
+
+    window = tk.Tk()
+    window.title("BDCOM | " + sport)
+    
+    #LINE 1
+    def show_link():
+        tls.send_taska(tl, "show interface " + sport)
+    def show_mac():
+        tls.send_taska(tl, "show mac address-table interface " + sport)
+    def show_zatuhanie():
+        tls.send_taska(tl, "show epon optical-transceiver-diagnosis interface " + sport)
+
+    def epon_reboot():
+        tls.send_taska(tl, "epon reboot onu interface " + sport)
+
+    #LINE 2
+    def show_lease_all():
+        tls.send_taska(tl, "show ip dhcp-relay snooping binding all")
+    def show_log():
+        tls.send_taska(tl, "show logging", 2)
+
+    #lINE 3
+    def show_more():
+        tls.send_taska(tl, " ")
+    def cancel():   
+        tls.send_taska(tl, "q")
+    def interact():
+        tl.interact()
+
+    #LINE GATEWAY
+    def show_arp_by_mac():
+        gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+
+    #LINE 1
+    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t.grid(column=10, row=10, sticky='w')
+    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t.grid(column=10, row=20, sticky='w')
+    zatuh_t = tk.Button(window, text="Show zatuhanie", font=("Helvetica", 10), command=test_cable)
+    zatuh_t.grid(column=10, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=10, row=40, sticky='w', pady='0.3m')
+
+    e_reboot = tk.Button(window, text="Epon reboot", font=("Helvetica", 10), command=epon_reboot)
+    e_reboot.grid(column=10, row=50, sticky='w')
+
+    #LINE 2
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t.grid(column=20, row=10, sticky='w')
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t.grid(column=20, row=20, sticky='w')
+
+    #LINE 3
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t.grid(column=30, row=10, sticky='w')
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t.grid(column=30, row=20, sticky='w')
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t.grid(column=30, row=30, sticky='w')
+
+    #GW LINE
+    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    link_t.grid(column=40, row=10, sticky='w')
+    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    mac_data.insert(0, "ffff.ffff.ffff")
+    mac_data.grid(column=45, row=10, sticky='w')
+
+    window.mainloop()
+    gateway['connection'].close()

@@ -2,7 +2,7 @@ import time
 import re
 import vendors as vd
 
-DEBUG = 1
+DEBUG = 0
 
 def send_task(telnet_inst, task):
     telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
@@ -12,13 +12,14 @@ def send_taska(telnet_inst, task, sleep_time = 0.5, vendor = 'default'):
     debug_log('task: ' + task)
     debug_log('vendor: ' + vendor)
     if vendor == vd.Switch.RAISECOM.name:
-        print('hi!')
         telnet_inst.write(task.encode('ascii') + b"\r")
-    elif vendor == 'default':
+    elif vendor == vd.Switch.DLINK_3200.name or vendor == vd.Switch.DLINK_3526.name:
         telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
+        telnet_inst.write(b"\r\n" + " ".encode('ascii') + b"\r\n")
+    elif vendor == 'default':
+        telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\n")
     time.sleep(sleep_time)
     tmp_answer =  telnet_inst.read_very_eager().decode()
-    tmp_answer = re.sub(task, "", tmp_answer)
     answer = tmp_answer
 
     assure = 1
@@ -34,7 +35,7 @@ def send_taska(telnet_inst, task, sleep_time = 0.5, vendor = 'default'):
             assure = 0
         try_count = try_count + 1
 
-    debug_log('answer: ' + answer)
+    print(answer)
 
     return answer
 

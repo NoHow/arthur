@@ -5,8 +5,9 @@ class Switch(Enum):
     LINKSYS = 2
     RAISECOM = 3
     FOXGATE = 4
-    DLINK = 5
-    BDCOM = 6
+    DLINK_3200 = 5
+    DLINK_3526 = 6
+    BDCOM = 7
 
 class Gateway(Enum):
     ZTE = 1
