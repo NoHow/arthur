@@ -48,7 +48,7 @@ def zte_init(tl, sw_ip, port):
         tls.send_taska(tl, "set dhcp snooping-and-option82 enable")
         tls.send_taska(tl, "set port" + sport + " acl " + sport + " dis")
         tls.send_taska(tl, "set dhcp port " +  sport + " client")
-        tls.send_taska(tl, "set dhcp snooping add por t" + sport)
+        tls.send_taska(tl, "set dhcp snooping add port " + sport)
         tls.send_taska(tl, "set dhcp ip-source-guard add port " + sport)
         tls.send_taska(tl, "set dhcp option82 add port " + sport)
         tls.send_taska(tl, "set dhcp option82 sub-option port " + sport + " circuit-ID on cis")
@@ -142,8 +142,8 @@ def zte_init(tl, sw_ip, port):
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w')
-    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
 
@@ -210,12 +210,14 @@ def cisco_init(tl, sw_ip, port):
         tls.send_task(tl, "no ip dhcp snooping trust")
         tls.send_taska(tl, "end")
     def static_bind():
+        mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
         tls.send_task(tl, "configure")
-        tls.send_taska(tl, "ip source-guard binding " + mac_data_bind.get() + " " + vlan_data_bind.get() + " " +  ip_data_bind.get() + " ethernet " + sport)
+        tls.send_taska(tl, "ip source-guard binding " + mac_to_bind + " " + vlan_data_bind.get() + " " +  ip_data_bind.get() + " ethernet " + sport)
         tls.send_taska(tl, "end")
     def static_bind_remove():
+        mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
         tls.send_task(tl, "configure")
-        tls.send_taska(tl, "no ip source-guard binding " + mac_data_bind.get() + " " + vlan_data_bind.get())
+        tls.send_taska(tl, "no ip source-guard binding " + mac_to_bind + " " + vlan_data_bind.get())
         tls.send_taska(tl, "end")
 
     #LINE 2
@@ -249,7 +251,7 @@ def cisco_init(tl, sw_ip, port):
     link_t.grid(column=10, row=10, sticky='w')
     admin_t = tk.Button(window, text="Show admin", font=("Helvetica", 10), command=show_admin)
     admin_t.grid(column=10, row=20, sticky='w')
-    desc_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_description)
+    desc_t = tk.Button(window, text="Show desc", font=("Helvetica", 10), command=show_description)
     desc_t.grid(column=10, row=30, sticky='w')
     stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
     stat_t.grid(column=10, row=40, sticky='w')
@@ -275,30 +277,30 @@ def cisco_init(tl, sw_ip, port):
     dhcp_t.grid(column=10, row=120, sticky='w')
 
     static_bind = tk.Button(window, text="Static bind", font=("Helvetica", 10), command=static_bind)
-    static_bind.grid(column=10, row=120, sticky='w')
-    static_bind_remove = tk.Button(window, text="Static bind", font=("Helvetica", 10), command=static_bind_remove)
-    static_bind_remove.grid(column=15, row=120, sticky='w')
-    mac_info_bind = tk.Label(window, text="MACb", font=("Helvetica", 10))
-    mac_info_bind.grid(column=10, row=130, sticky='w')
-    mac_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
-    mac_data_bind.grid(column=15, row=130, sticky='w')
+    static_bind.grid(column=10, row=130, sticky='w')
+    static_bind_remove = tk.Button(window, text="Delete bind", font=("Helvetica", 10), command=static_bind_remove)
+    static_bind_remove.grid(column=15, row=130, sticky='w')
+    mac_info_bind = tk.Label(window, text="MAC", font=("Helvetica", 10))
+    mac_info_bind.grid(column=10, row=140, sticky='w')
+    mac_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data_bind.grid(column=15, row=140, sticky='w')
     mac_data_bind.insert(0, "ff:ff:ff:ff:ff:ff")
-    ip_info_bind = tk.Label(window, text="IPb", font=("Helvetica", 10))
-    ip_info_bind.grid(column=10, row=140, sticky='w')
-    ip_data_bind = tk.Entry(window, font=("Helvetica", 10), width=5)
-    ip_data_bind.grid(column=15, row=140, sticky='w')
+    ip_info_bind = tk.Label(window, text="IP", font=("Helvetica", 10))
+    ip_info_bind.grid(column=10, row=150, sticky='w')
+    ip_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
+    ip_data_bind.grid(column=15, row=150, sticky='w')
     ip_data_bind.insert(0, "xxx.xxx.xxx.xxx")
-    vlan_info_bind = tk.Label(window, text="VLANb", font=("Helvetica", 10))
-    vlan_info_bind.grid(column=10, row=150, sticky='w')
+    vlan_info_bind = tk.Label(window, text="VLAN", font=("Helvetica", 10))
+    vlan_info_bind.grid(column=10, row=160, sticky='w')
     vlan_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
-    vlan_data_bind.grid(column=15, row=150, sticky='w')
+    vlan_data_bind.grid(column=15, row=160, sticky='w')
     
     #LINE 2
-    lease_all_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
     lease_all_t.grid(column=20, row=10, sticky='w')
-    log_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_log)
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
     log_t.grid(column=20, row=20, sticky='w')
-    all_down_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_all_down)
+    all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
     all_down_t.grid(column=20, row=30, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
@@ -319,8 +321,8 @@ def cisco_init(tl, sw_ip, port):
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w')
-    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
 
@@ -347,7 +349,7 @@ def dlink_3200_init(tl, sw_ip, port):
     def show_statistics():
         tls.send_taska(tl, "show error ports " + sport)
     def show_mac():
-        tls.send_taska(tl, "show fdb " + sport)
+        tls.send_taska(tl, "show fdb port " + sport)
     def test_cable():
         tls.send_taska(tl, "cable_diag ports " + sport, 1)
     def show_config():
@@ -395,7 +397,7 @@ def dlink_3200_init(tl, sw_ip, port):
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
     link_t.grid(column=10, row=10, sticky='w')
-    desc_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_description)
+    desc_t = tk.Button(window, text="Show desc", font=("Helvetica", 10), command=show_description)
     desc_t.grid(column=10, row=20, sticky='w')
     stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
     stat_t.grid(column=10, row=30, sticky='w')
@@ -403,8 +405,8 @@ def dlink_3200_init(tl, sw_ip, port):
     mac_t.grid(column=10, row=40, sticky='w')
     cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
     cable_t.grid(column=10, row=50, sticky='w')
-    show_config = tk.Button(window, text="Show config", font("Helvetice", 10), command=show_config)
-    show_config.grid(column=10, row=60, sticky='w')
+    config_b = tk.Button(window, text="Show config", font=("Helvetica", 10), command=show_config)
+    config_b.grid(column=10, row=60, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
     line.grid(column=10, row=70, sticky='w', pady='0.3m')
@@ -417,13 +419,13 @@ def dlink_3200_init(tl, sw_ip, port):
     line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
     line2.grid(column=10, row=110, sticky='w', pady='0.3m')
 
-    ip_i_on = tk.Button(window, text="IP inspec on", font=("Helvetica", 10), command=dhcp_on)
+    ip_i_on = tk.Button(window, text="IP inspec on", font=("Helvetica", 10), command=ip_inspection_on)
     ip_i_on.grid(column=10, row=120, sticky='w')
-    ip_i_off = tk.Button(window, text="IP inspec off", font=("Helvetica", 10), command=static_bind)
+    ip_i_off = tk.Button(window, text="IP inspec off", font=("Helvetica", 10), command=ip_inspection_off)
     ip_i_off.grid(column=15, row=120, sticky='w')
-    arp_i_on = tk.Button(window, text="ARP inspec on", font=("Helvetica", 10), command=static_bind_remove)
+    arp_i_on = tk.Button(window, text="ARP inspec on", font=("Helvetica", 10), command=arp_inspection_on)
     arp_i_on.grid(column=10, row=130, sticky='w')
-    arp_i_off = tk.Button(window, text="ARP inspec off", font=("Helvetica", 10), command=static_bind_remove)
+    arp_i_off = tk.Button(window, text="ARP inspec off", font=("Helvetica", 10), command=arp_inspection_off)
     arp_i_off.grid(column=15, row=130, sticky='w')
     
     #LINE 2
@@ -452,7 +454,7 @@ def dlink_3200_init(tl, sw_ip, port):
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w')
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.grid(column=45, row=10, sticky='w')
     mac_data.insert(0, "ffff.ffff.ffff")
@@ -524,7 +526,7 @@ def dlink_3526_init(tl, sw_ip, port):
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
     link_t.grid(column=10, row=10, sticky='w')
-    desc_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_description)
+    desc_t = tk.Button(window, text="Show desc", font=("Helvetica", 10), command=show_description)
     desc_t.grid(column=10, row=20, sticky='w')
     stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
     stat_t.grid(column=10, row=30, sticky='w')
@@ -532,7 +534,7 @@ def dlink_3526_init(tl, sw_ip, port):
     mac_t.grid(column=10, row=40, sticky='w')
     cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
     cable_t.grid(column=10, row=50, sticky='w')
-    show_config = tk.Button(window, text="Show config", font("Helvetice", 10), command=show_config)
+    show_config = tk.Button(window, text="Show config", font=("Helvetice", 10), command=show_config)
     show_config.grid(column=10, row=60, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
@@ -577,7 +579,7 @@ def dlink_3526_init(tl, sw_ip, port):
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w')
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.grid(column=45, row=10, sticky='w')
     mac_data.insert(0, "ffff.ffff.ffff")
@@ -634,7 +636,7 @@ def bdcom_init(tl, sw_ip, leaf, port):
     link_t.grid(column=10, row=10, sticky='w')
     mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
     mac_t.grid(column=10, row=20, sticky='w')
-    zatuh_t = tk.Button(window, text="Show zatuhanie", font=("Helvetica", 10), command=test_cable)
+    zatuh_t = tk.Button(window, text="Show zatuhanie", font=("Helvetica", 10), command=show_zatuhanie)
     zatuh_t.grid(column=10, row=30, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
@@ -659,8 +661,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w')
-    mac_data = tk.Entry(window, from_=1, to=64, font=("Helvetica", 10), width=15)
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
 
