@@ -668,3 +668,128 @@ def bdcom_init(tl, sw_ip, leaf, port):
 
     window.mainloop()
     gateway['connection'].close()
+
+#TO DO
+def foxgate_init(tl, sw_ip, port):
+    tls.login_try(tl, user, password)
+    time.sleep(1)
+    
+    sport = 'e0/0/' + str(port)
+    tl.write("enable".encode('ascii') + b"\r\n")
+    tls.send_taska(tl, "show interface brief ethernet " + sport)
+    tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
+
+    gateway = gwp.get_connection(sw_ip)
+
+    window = tk.Tk()
+    window.title("FOXGATE | PORT: " + sport)
+    
+    #LINE 1
+    def show_link():
+        tls.send_taska(tl, "show interface brief ethernet " + sport)
+    def show_statistics():
+        tls.send_taska(tl, "show port " + sport + " statistics")
+    def show_mac():
+        tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
+
+    def port_off():
+        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "shutdown")
+        tls.send_taska(tl, "end")
+    def port_on():
+        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+    def stp_boot():
+        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "spanning-tree")
+        time.sleep(2)
+        tls.send_taska(tl, "no spanning-tree")
+        tls.send_task(tl, "shutdown")
+        time.sleep(2)
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+        
+
+    #LINE 2
+    def show_log():
+        tls.send_taska(tl, "show logging buffered", 2)
+    def show_all_down():
+        tls.send_taska(tl, "show interface brief ethernet")
+    
+    def neigh_port_boot():
+        tmp_data = 'e0/0/' + switch_port_data.get()
+        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "interface ethernet " + tmp_data)
+        tls.send_taska(tl, "shutdown")
+        time.sleep(3)
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+
+    #lINE 3
+    def show_more():
+        tls.send_taska(tl, " ")
+    def cancel():   
+        tls.send_taska(tl, "q")
+    def interact():
+        tl.interact()
+
+    #LINE GATEWAY
+    def show_arp_by_mac():
+        gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+
+    #LINE 1
+    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t.grid(column=10, row=10, sticky='w')
+    stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
+    stat_t.grid(column=10, row=20, sticky='w')
+    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t.grid(column=10, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=10, row=40, sticky='w', pady='0.3m')
+
+    link_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
+    link_t.grid(column=10, row=50, sticky='w')
+    link_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
+    link_t.grid(column=10, row=60, sticky='w')
+    static_t = tk.Button(window, text="STP boot", font=("Helvetica", 10), command=stp_boot)
+    static_t.grid(column=10, row=70, sticky='w')
+
+    line_padding = '0'
+    line = tk.Label(window, text="", font=("Helvetica", 10))
+    line.grid(column=15, sticky='w', padx='20')
+    #LINE 2
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t.grid(column=20, row=10, sticky='w', padx=line_padding)
+    all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
+    all_down_t.grid(column=20, row=20, sticky='w', padx=line_padding)
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=30, sticky='w', pady='0.3m', padx=line_padding)
+
+    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
+    link_t.grid(column=20, row=40, sticky='w')
+    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
+    switch_port_data.grid(column=25, row=40, sticky='w', padx=line_padding)
+
+    #LINE 3
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t.grid(column=30, row=10, sticky='w')
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t.grid(column=30, row=20, sticky='w')
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t.grid(column=30, row=30, sticky='w')
+
+    #GW LINE
+    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data.insert(0, "ffff.ffff.ffff")
+    mac_data.grid(column=45, row=10, sticky='w')
+
+    window.mainloop()
+    gateway['connection'].close()

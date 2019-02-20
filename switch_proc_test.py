@@ -11,4 +11,5 @@ leaf = 2
 #sp.cisco_init(tn_sw, sw_ip, port)
 #sp.dlink_3200_init(tn_sw, sw_ip, port)
 #sp.dlink_3526_init(tn_sw, sw_ip, port)
+sp.foxgate_init(tn_sw, sw_ip, port)
 #sp.bdcom_init(tn_sw, sw_ip, leaf, port)

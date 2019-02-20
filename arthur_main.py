@@ -10,7 +10,9 @@ import vendors as vd
 
 host = sys.argv[1]
 port = sys.argv[2]
-#leaf = sys.argv[3]
+
+if len(sys.argv) == 4:
+    leaf = sys.argv[3]
 
 switch_name = ug.get_switch_vendor(host)
 tn_sw = tl.Telnet(host)
@@ -23,9 +25,11 @@ elif switch_name == vd.Switch.RAISECOM.name:
     pass
 elif switch_name == vd.Switch.FOXGATE.name:
     pass
-elif switch_name == vd.Switch.DLINK.name:
-    pass
+elif switch_name == vd.Switch.DLINK_3200.name:
+    swp.dlink_3200_init(tn_sw, host, port)
+elif switch_name == vd.Switch.DLINK_3526.name:
+    swp.dlink_3526_init(tn_sw, host, port)
 elif switch_name == vd.Switch.BDCOM.name:
-    pass
+    swp.bdcom_init(tn_sw, host, leaf, port)
 
 tn_sw.close()
