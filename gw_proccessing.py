@@ -28,18 +28,18 @@ def show_arp_by_mac(tn_gw, vendor, mac):
     tmac = tls.transform_mac(mac)
 
     if vendor == vd.Gateway.CISCO.name:
-        tls.send_taska(tn_gw, "show arp | include " + tmac)
+        tls.send_taska(tn_gw, "show arp | include " + tmac, 'default', 2)
         return 1
     elif vendor == vd.Gateway.ZTE.name:
-        tls.send_taska(tn_gw, "show arp dynamic | include " + tmac)
+        tls.send_taska(tn_gw, "show arp dynamic | include " + tmac, 'default', 2)
         return 1
     elif vendor == vd.Gateway.JUNIPER.name:
         jmac = tls.transform_mac_2p(tmac)
-        tls.send_taska(tn_gw, "show arp | match " + jmac)
+        tls.send_taska(tn_gw, "show arp | match " + jmac, 'default', 2)
         return 1
     elif vendor == vd.Gateway.HUAWEI.name:
         hmac = tls.transform_mac_def(tmac)
-        tls.send_taska(tn_gw, "display arp dynamic | include " + hmac)
+        tls.send_taska(tn_gw, "display arp dynamic | include " + hmac, 'default', 2)
         return 1
 
     return -1

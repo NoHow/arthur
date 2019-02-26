@@ -3,6 +3,7 @@ import tkinter as tk
 import time
 import underground as ug
 import gw_proccessing as gwp
+import vendors as vd
 
 user = "sam"
 password = "osinkii"
@@ -16,7 +17,6 @@ def zte_init(tl, sw_ip, port):
     tl.write("rbnfqcrbqbynthyt".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "rbnfqcrbqbynthyt")
     tls.send_taska(tl, "show port " + sport)
-    tls.send_taska(tl, "show port " + sport + " statistics")
     tls.send_taska(tl, "show fdb port " + sport + " det")
     tls.send_taska(tl, "show mac dynamic port " + sport)
     tls.send_taska(tl, "show dhcp snooping binding port " + sport)
@@ -37,7 +37,7 @@ def zte_init(tl, sw_ip, port):
     def show_lease():
         tls.send_taska(tl, "show dhcp snooping binding port " + sport)
     def test_cable():
-        tls.send_taska(tl, "show vct port " + sport, 2)
+        tls.send_taska(tl, "show vct port " + sport, 'default', 2)
 
     def port_off():
         tls.send_taska(tl, "set port " + sport + " disable")
@@ -63,7 +63,7 @@ def zte_init(tl, sw_ip, port):
     def show_lease_all():
         tls.send_taska(tl, "show dhcp snooping binding")
     def show_log():
-        tls.send_taska(tl, "show terminal log", 2)
+        tls.send_taska(tl, "show terminal log", 'default', 2)
     def show_all_down():
         tls.send_taska(tl, "show ports")
     
@@ -73,6 +73,17 @@ def zte_init(tl, sw_ip, port):
         tls.send_taska(tl, "set port " + tmp_data + " disable")
         time.sleep(4)
         tls.send_taska(tl, "set port " + tmp_data + " enable")
+    
+    def show_switch():
+        tls.send_taska(tl, "show version")
+    
+    def set_description():
+        description = description_input.get()
+        tls.send_taska(tl, "set port " + sport + " description " + description)
+    def clear_description():
+        tls.send_taska(tl, "clear port " + sport + " description")
+    def clear_statistics():
+        tls.send_taska(tl, "clear port " + sport + " statistics")
 
     #lINE 3
     def show_more():
@@ -81,6 +92,10 @@ def zte_init(tl, sw_ip, port):
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
+
+    def save_config():
+        tls.send_task(tl, "saveconfig")
+        tls.send_taska(tl, "write")
 
     #LINE GATEWAY
     def show_arp_by_mac():
@@ -132,6 +147,24 @@ def zte_init(tl, sw_ip, port):
     switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=60, sticky='w')
 
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=70, sticky='w', pady='0.3m')
+
+    sh_vrs_b = tk.Button(window, text="Show switch", font=("Helvetica", 10), command=show_switch)
+    sh_vrs_b.grid(column=20, row=80, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=90, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=100, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=100, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=110, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=120, sticky='w')
+
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
@@ -141,8 +174,8 @@ def zte_init(tl, sw_ip, port):
     interact_t.grid(column=30, row=30, sticky='w')
 
     #GW LINE
-    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
@@ -158,11 +191,12 @@ def cisco_init(tl, sw_ip, port):
     sport = 'e' + str(port)
     tls.send_taska(tl, "show interface status ethernet " + sport)
     tls.send_taska(tl, "show interface counters ethernet " + sport)
-    tls.send_taska(tl, "show interface configuration ethernet " + sport)
+    tls.send_taska(tl, "show interface config ethernet " + sport)
     tls.send_taska(tl, "show mac address-table ethernet " + sport)
     tls.send_taska(tl, "show ip dhcp snooping binding ethernet " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+
 
     window = tk.Tk()
     window.title("CISCO | PORT: " + sport)
@@ -171,7 +205,7 @@ def cisco_init(tl, sw_ip, port):
     def show_link():
         tls.send_taska(tl, "show interface status ethernet " + sport)
     def show_admin():
-        tls.send_taska(tl, "show interface configuration ethernet " + sport)
+        tls.send_taska(tl, "show interface config ethernet " + sport)
     def show_description():
         tls.send_taska(tl, "show interface description ethernet " + sport)
     def show_statistics():
@@ -181,10 +215,10 @@ def cisco_init(tl, sw_ip, port):
     def show_lease():
         tls.send_taska(tl, "show ip dhcp snooping binding ethernet " + sport)
     def test_cable():
-        tls.send_taska(tl, "test copper-port tdr " + sport, 2)
+        tls.send_taska(tl, "test copper-port tdr " + sport, 'default', 2)
 
     def port_off():
-        tls.send_task(tl, "configurtion")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + sport)
         tls.send_task(tl, "shutdown")
         tls.send_taska(tl, "end")
@@ -195,6 +229,7 @@ def cisco_init(tl, sw_ip, port):
         tls.send_taska(tl, "end")
 
     def dhcp_on():
+        tls.send_task(tl, "configure    ")
         tls.send_task(tl, "ip dhcp snooping")
         tls.send_task(tl, "ip dhcp information option")
         tls.send_task(tl, "no ip dhcp snooping database")
@@ -224,15 +259,30 @@ def cisco_init(tl, sw_ip, port):
     def show_lease_all():
         tls.send_taska(tl, "show ip dhcp snooping binding")
     def show_log():
-        tls.send_taska(tl, "show log", 2)
+        tls.send_taska(tl, "show log", 'default', 2)
     def show_all_down():
-        tls.send_taska(tl, "show interface configuration")
+        tls.send_taska(tl, "show interface config")
     def neigh_port_boot():
         tls.send_task(tl, "configurtion")
         tls.send_taska(tl, "interface ethernet " + 'e' + switch_port_data.get())
         tls.send_taska(tl, "shutdown")
         time.sleep(4)
         tls.send_taska(tl, "no shutdown")
+
+    def set_description():
+        description = description_input.get()
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "description " + description)
+        tls.send_taska(tl, "end")
+    def clear_description():
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "no description")
+        tls.send_taska(tl, "end")
+    def clear_statistics():
+        tls.send_taska(tl, "clear counters ethernet " + sport)
+
 
     #lINE 3
     def show_more():
@@ -241,6 +291,9 @@ def cisco_init(tl, sw_ip, port):
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
+
+    def save_config():
+        tls.send_taska(tl, "write")
 
     #LINE GATEWAY
     def show_arp_by_mac():
@@ -311,6 +364,18 @@ def cisco_init(tl, sw_ip, port):
     switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=50, sticky='w')
 
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=60, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=70, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=70, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=80, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=90, sticky='w')
+
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
@@ -330,11 +395,12 @@ def cisco_init(tl, sw_ip, port):
     gateway['connection'].close()
 
 def dlink_3200_init(tl, sw_ip, port):
+    vendor = vd.Switch.DLINK_3200.name
     tls.login_try(tl, user, password)
     
     sport = str(port)
-    tls.send_taska(tl, "show ports " + sport)
-    tls.send_taska(tl, "show fdb " + sport)
+    tls.send_taska(tl, "show ports " + sport, vendor)
+    tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
 
@@ -343,15 +409,15 @@ def dlink_3200_init(tl, sw_ip, port):
     
     #LINE 1
     def show_link():
-        tls.send_taska(tl, "show ports " + sport)
+        tls.send_taska(tl, "show ports " + sport, vendor)
     def show_description():
-        tls.send_taska(tl, "show ports " + sport + " description")
+        tls.send_taska(tl, "show ports " + sport + " description", vendor)
     def show_statistics():
-        tls.send_taska(tl, "show error ports " + sport)
+        tls.send_taska(tl, "show error ports " + sport, vendor)
     def show_mac():
         tls.send_taska(tl, "show fdb port " + sport)
     def test_cable():
-        tls.send_taska(tl, "cable_diag ports " + sport, 1)
+        tls.send_taska(tl, "cable_diag ports " + sport, 'default', 1)
     def show_config():
         tls.send_taska(tl, "show address_binding ports " + sport)
 
@@ -361,26 +427,38 @@ def dlink_3200_init(tl, sw_ip, port):
         tls.send_task(tl, "config ports " + sport + " state enable")
 
     def ip_inspection_on():
-        tls.send_taska(tl, "config address_binding ports " + sport + " ip_inspection enable")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " ip_inspection enable")
     def ip_inspection_off():
-        tls.send_taska(tl, "config address_binding ports " + sport + " ip_inspection disable")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " ip_inspection disable")
     def arp_inspection_on():
-        tls.send_taska(tl, "config address_binding ports " + sport + " arp_inspection strict")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " arp_inspection strict")
     def arp_inspection_off():
-        tls.send_taska(tl, "config address_binding ports " + sport + " arp_inspection disable")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " arp_inspection disable")
     
 
     #LINE 2
     def show_lease_all():
         tls.send_taska(tl, "show address_binding dhcp_snoop binding_entry")
     def show_log():
-        tls.send_taska(tl, "show log", 2)
+        tls.send_taska(tl, "show log", 'default', 2)
     def show_all_down():
         tls.send_taska(tl, "show ports")
     def neigh_port_boot():
         tls.send_taska(tl, "config ports " + switch_port_data.get() + " state disable")
         time.sleep(4)
         tls.send_taska(tl, "config ports " + switch_port_data.get() + " state enable")
+
+    def set_description():
+        description = description_input.get()
+        tls.send_taska(tl, "config ports " + sport + " description " + description)
+    def clear_description():
+        tls.send_taska(tl, "config ports " + sport + " clear_description")
+    def clear_statistics():
+        tls.send_taska(tl, "clear counters ports " + sport)
+
+    def show_blocked_mac():
+        tls.send_taska(tl, "show address_binding blocked all")
+
 
     #lINE 3
     def show_more():
@@ -389,6 +467,9 @@ def dlink_3200_init(tl, sw_ip, port):
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
+    
+    def save_config():
+        tls.send_taska(tl, "save")
 
     #LINE GATEWAY
     def show_arp_by_mac():
@@ -444,6 +525,24 @@ def dlink_3200_init(tl, sw_ip, port):
     switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=50, sticky='w')
 
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=60, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=70, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=70, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=80, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=90, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=100, sticky='w', pady='0.3m')
+
+    show_blocked_b = tk.Button(window, text="Show blocked mac", font=("Helvetica", 10), command=show_blocked_mac)
+    show_blocked_b.grid(column=20, row=110, sticky='w')
+
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
@@ -464,10 +563,11 @@ def dlink_3200_init(tl, sw_ip, port):
 
 def dlink_3526_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
+    vendor = vd.Switch.DLINK_3526.name
     
     sport = str(port)
-    tls.send_taska(tl, "show ports " + sport)
-    tls.send_taska(tl, "show fdb " + sport)
+    tls.send_taska(tl, "show ports " + sport, vendor)
+    tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
 
@@ -476,17 +576,17 @@ def dlink_3526_init(tl, sw_ip, port):
     
     #LINE 1
     def show_link():
-        tls.send_taska(tl, "show ports " + sport)
+        tls.send_taska(tl, "show ports " + sport, vendor)
     def show_description():
-        tls.send_taska(tl, "show ports " + sport + " description")
+        tls.send_taska(tl, "show ports " + sport + " description", vendor)
     def show_statistics():
-        tls.send_taska(tl, "show error ports " + sport)
+        tls.send_taska(tl, "show error ports " + sport, vendor)
     def show_mac():
-        tls.send_taska(tl, "show fdb " + sport)
+        tls.send_taska(tl, "show fdb port " + sport)
     def test_cable():
-        tls.send_taska(tl, "cable_diag ports " + sport, 1)
+        tls.send_taska(tl, "cable_diag ports " + sport, 'default', 1)
     def show_config():
-        tls.send_taska(tl, "show address_binding ports " + sport)
+        tls.send_taska(tl, "show address_binding ports")
 
     def port_off():
         tls.send_task(tl, "config ports " + sport + " state disable")
@@ -494,22 +594,42 @@ def dlink_3526_init(tl, sw_ip, port):
         tls.send_task(tl, "config ports " + sport + " state enable")
 
     def bind_state_on():
-        tls.send_taska(tl, "config address_binding ports " + sport + " state enable")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " state enable")
     def bind_state_off():
-        tls.send_taska(tl, "config address_binding ports " + sport + " state disable")
+        tls.send_taska(tl, "config address_binding ip_mac ports " + sport + " state disable")
+
+    def bind_create():
+        ip_add = ip_data_bind.get()
+        mac_add = tls.transform_mac_def(mac_data_bind.get()).upper()
+        tls.send_task(tl, "config address_binding ip_mac ipaddress " + ip_add + " mac_address " + mac_add + " mode acl ports " + sport)
+    def bind_remove():
+        ip_add = ip_data_bind.get()
+        mac_add = tls.transform_mac_def(mac_data_bind.get()).upper()
+        tls.send_task(tl, "delete address_binding ip_mac ipaddress " + ip_add + " mac_address " + mac_add)
     
 
     #LINE 2
     def show_lease_all():
         tls.send_taska(tl, "show address_binding dhcp_snoop binding_entry")
     def show_log():
-        tls.send_taska(tl, "show log", 2)
+        tls.send_taska(tl, "show log", 'default', 2)
     def show_all_down():
         tls.send_taska(tl, "show ports")
     def neigh_port_boot():
         tls.send_taska(tl, "config ports " + switch_port_data.get() + " state disable")
         time.sleep(4)
         tls.send_taska(tl, "config ports " + switch_port_data.get() + " state enable")
+
+    def set_description():
+        description = description_input.get()
+        tls.send_taska(tl, "config ports " + sport + " description " + description)
+    def clear_description():
+        tls.send_taska(tl, "config ports " + sport + " clear_description")
+    def clear_statistics():
+        tls.send_taska(tl, "clear counters ports " + sport)
+    
+    def show_blocked_mac():
+        tls.send_taska(tl, "show address_binding blocked all")
 
     #lINE 3
     def show_more():
@@ -518,6 +638,9 @@ def dlink_3526_init(tl, sw_ip, port):
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
+
+    def save_config():
+        tls.send_taska(tl, "save")
 
     #LINE GATEWAY
     def show_arp_by_mac():
@@ -553,6 +676,21 @@ def dlink_3526_init(tl, sw_ip, port):
     ip_i_off = tk.Button(window, text="IP_MAC OFF", font=("Helvetica", 10), command=bind_state_off)
     ip_i_off.grid(column=15, row=120, sticky='w')
     
+    bind_create_b = tk.Button(window, text="Create bind", font=("Helvetica", 10), command=bind_create)
+    bind_create_b.grid(column=10, row=130, sticky='w')
+    bind_remove_b = tk.Button(window, text="Remove bind", font=("Helvetica", 10), command=bind_remove)
+    bind_remove_b.grid(column=10, row=130, sticky='w')
+    mac_info_bind = tk.Label(window, text="MAC", font=("Helvetica", 10))
+    mac_info_bind.grid(column=10, row=140, sticky='w')
+    mac_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data_bind.grid(column=15, row=140, sticky='w')
+    mac_data_bind.insert(0, "XX-XX-XX-XX-XX-XX")
+    ip_info_bind = tk.Label(window, text="IP", font=("Helvetica", 10))
+    ip_info_bind.grid(column=10, row=150, sticky='w')
+    ip_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
+    ip_data_bind.grid(column=15, row=150, sticky='w')
+    ip_data_bind.insert(0, "xxx.xxx.xxx.xxx")    
+    
     #LINE 2
     lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
     lease_all_t.grid(column=20, row=10, sticky='w')
@@ -568,6 +706,24 @@ def dlink_3526_init(tl, sw_ip, port):
     link_t.grid(column=20, row=50, sticky='w')
     switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=50, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=60, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=70, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=70, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=80, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=90, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=100, sticky='w', pady='0.3m')
+
+    show_blocked_b = tk.Button(window, text="Show blocked mac", font=("Helvetica", 10), command=show_blocked_mac)
+    show_blocked_b.grid(column=20, row=110, sticky='w')
 
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
@@ -588,6 +744,8 @@ def dlink_3526_init(tl, sw_ip, port):
     gateway['connection'].close()
 
 def bdcom_init(tl, sw_ip, leaf, port):
+    user = "duty"
+    password = "support"
     tls.login_try(tl, user, password)
     time.sleep(1)
     
@@ -614,10 +772,14 @@ def bdcom_init(tl, sw_ip, leaf, port):
         tls.send_taska(tl, "epon reboot onu interface " + sport)
 
     #LINE 2
+    def show_all_leaf():
+        tls.send_taska(tl, "show interface brief")
+    def show_inactive_onu():
+        tls.send_taska(tl, "show epon inactive-onu")
     def show_lease_all():
         tls.send_taska(tl, "show ip dhcp-relay snooping binding all")
     def show_log():
-        tls.send_taska(tl, "show logging", 2)
+        tls.send_taska(tl, "show logging", 'default', 2)
 
     #lINE 3
     def show_more():
@@ -646,10 +808,14 @@ def bdcom_init(tl, sw_ip, leaf, port):
     e_reboot.grid(column=10, row=50, sticky='w')
 
     #LINE 2
+    int_brief_b = tk.Button(window, text="All leafs", font=("Helvetica", 10), command=show_all_leaf)
+    int_brief_b.grid(column=20, row=10, sticky='w')
+    inactive_onu_b = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_inactive_onu)
+    inactive_onu_b.grid(column=20, row=20, sticky='w')
     lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
-    lease_all_t.grid(column=20, row=10, sticky='w')
+    lease_all_t.grid(column=20, row=30, sticky='w')
     log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
-    log_t.grid(column=20, row=20, sticky='w')
+    log_t.grid(column=20, row=40, sticky='w')
 
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
@@ -693,17 +859,17 @@ def foxgate_init(tl, sw_ip, port):
         tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
 
     def port_off():
-        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + sport)
         tls.send_task(tl, "shutdown")
         tls.send_taska(tl, "end")
     def port_on():
-        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + sport)
         tls.send_task(tl, "no shutdown")
         tls.send_taska(tl, "end")
     def stp_boot():
-        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + sport)
         tls.send_task(tl, "spanning-tree")
         time.sleep(2)
@@ -722,11 +888,27 @@ def foxgate_init(tl, sw_ip, port):
     
     def neigh_port_boot():
         tmp_data = 'e0/0/' + switch_port_data.get()
-        tls.send_task(tl, "configuration")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + tmp_data)
         tls.send_taska(tl, "shutdown")
         time.sleep(3)
         tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+
+    def set_description():
+        description = description_input.get()
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "description " + description)
+        tls.send_taska(tl, "end")
+    def clear_description():
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "interface ethernet " + sport)
+        tls.send_task(tl, "no description")
+        tls.send_taska(tl, "end")
+    def clear_statistics():
+        tls.send_task(tl, "configure")
+        tls.send_task(tl, "clear interface ethernet " + sport)
         tls.send_taska(tl, "end")
 
     #lINE 3
@@ -736,6 +918,11 @@ def foxgate_init(tl, sw_ip, port):
         tls.send_taska(tl, "q")
     def interact():
         tl.interact()
+
+    def save_config():
+        tls.send_task(tl, "copy running-config startup-config")
+        time.sleep(0.3)
+        tls.send_taska(tl, "y")
 
     #LINE GATEWAY
     def show_arp_by_mac():
@@ -775,6 +962,18 @@ def foxgate_init(tl, sw_ip, port):
     link_t.grid(column=20, row=40, sticky='w')
     switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=40, sticky='w', padx=line_padding)
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=50, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=60, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=60, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=70, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=80, sticky='w')
 
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)

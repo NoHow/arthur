@@ -13,8 +13,10 @@ def get_switch_vendor(mng_ip):
     if device_info == None:
         return -100
 
-    if re.search("des", device_info, flags=re.I):
-        return vd.Switch.DLINK.name
+    if re.search("des-3200", device_info, flags=re.I):
+        return vd.Switch.DLINK_3200.name
+    elif re.search("des-3526", device_info, flags=re.I):
+        return vd.Switch.DLINK_3526.name
     elif re.search("zte", device_info, flags=re.I):
         return vd.Switch.ZTE.name
     elif re.search("bdcom", device_info, flags=re.I):

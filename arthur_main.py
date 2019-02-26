@@ -20,7 +20,7 @@ tn_sw = tl.Telnet(host)
 if switch_name == vd.Switch.ZTE.name:
     swp.zte_init(tn_sw, host, port)
 elif switch_name == vd.Switch.LINKSYS.name:
-    swp.zte_init(tn_sw, host, port)
+    swp.cisco_init(tn_sw, host, port)
 elif switch_name == vd.Switch.RAISECOM.name:
     pass
 elif switch_name == vd.Switch.FOXGATE.name:

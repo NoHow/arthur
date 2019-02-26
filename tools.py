@@ -8,14 +8,14 @@ def send_task(telnet_inst, task):
     telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
     time.sleep(0.1)
 
-def send_taska(telnet_inst, task, sleep_time = 0.5, vendor = 'default'):
+def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.3, ):
     debug_log('task: ' + task)
     debug_log('vendor: ' + vendor)
     if vendor == vd.Switch.RAISECOM.name:
         telnet_inst.write(task.encode('ascii') + b"\r")
     elif vendor == vd.Switch.DLINK_3200.name or vendor == vd.Switch.DLINK_3526.name:
         telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
-        telnet_inst.write(b"\r\n" + " ".encode('ascii') + b"\r\n")
+        telnet_inst.write(b"\r\n" + "q".encode('ascii') + b"\r\n")
     elif vendor == 'default':
         telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\n")
     time.sleep(sleep_time)
