@@ -8,6 +8,7 @@ import switch_proc as swp
 import underground as ug
 import vendors as vd
 
+
 host = sys.argv[1]
 port = sys.argv[2]
 
@@ -24,7 +25,7 @@ elif switch_name == vd.Switch.LINKSYS.name:
 elif switch_name == vd.Switch.RAISECOM.name:
     pass
 elif switch_name == vd.Switch.FOXGATE.name:
-    pass
+    swp.foxgate_init(tn_sw, host, port)
 elif switch_name == vd.Switch.DLINK_3200.name:
     swp.dlink_3200_init(tn_sw, host, port)
 elif switch_name == vd.Switch.DLINK_3526.name:

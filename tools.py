@@ -1,14 +1,28 @@
 import time
 import re
 import vendors as vd
+import threading
+import sys
 
 DEBUG = 0
+
+class AsyncOutput(threading.Thread):
+    def __init__(self, tl_ref):
+        threading.Thread.__init__(self)
+        self.tl_ref = tl_ref
+
+    def run(self):
+        while 1:
+            text = self.tl_ref.read_eager()
+            if text:
+                sys.stdout.write(text.decode('ascii'))
+                sys.stdout.flush()
 
 def send_task(telnet_inst, task):
     telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
     time.sleep(0.1)
 
-def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.3, ):
+def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.2, ):
     debug_log('task: ' + task)
     debug_log('vendor: ' + vendor)
     if vendor == vd.Switch.RAISECOM.name:
@@ -22,20 +36,8 @@ def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.3, ):
     tmp_answer =  telnet_inst.read_very_eager().decode()
     answer = tmp_answer
 
-    assure = 1
-    try_count = 0
-    while assure:
-        if try_count > 32:
-            assure = 0
-        time.sleep(sleep_time)
-        tmp_answer = tmp_answer + telnet_inst.read_very_eager().decode()
-        if answer != tmp_answer:
-            answer = tmp_answer
-        elif answer == tmp_answer:
-            assure = 0
-        try_count = try_count + 1
 
-    print(answer)
+    #print(answer)
 
     return answer
 

@@ -5,6 +5,7 @@ import underground as ug
 import gw_proccessing as gwp
 import vendors as vd
 
+
 user = "sam"
 password = "osinkii"
 
@@ -13,6 +14,9 @@ def zte_init(tl, sw_ip, port):
     time.sleep(1)
     
     sport = str(port)
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
+
     tl.write("enable".encode('ascii') + b"\r\n")
     tl.write("rbnfqcrbqbynthyt".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "rbnfqcrbqbynthyt")
@@ -22,6 +26,9 @@ def zte_init(tl, sw_ip, port):
     tls.send_taska(tl, "show dhcp snooping binding port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("ZTE | PORT: " + sport)
@@ -129,6 +136,8 @@ def zte_init(tl, sw_ip, port):
     static_t = tk.Button(window, text="STATIC", font=("Helvetica", 10), command=dhcp_off)
     static_t.grid(column=15, row=100, sticky='w')
 
+    free_space = tk.Label(window, text=" ")
+    free_space.grid(column=19, row=10, padx='5')
     #LINE 2
     dhcp_t = tk.Button(window, text="Show dhcp", font=("Helvetica", 10), command=show_dhcp)
     dhcp_t.grid(column=20, row=10, sticky='w')
@@ -173,6 +182,12 @@ def zte_init(tl, sw_ip, port):
     interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
 
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
+
     #GW LINE
     arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
     arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
@@ -188,6 +203,9 @@ def zte_init(tl, sw_ip, port):
 def cisco_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
     
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
+
     sport = 'e' + str(port)
     tls.send_taska(tl, "show interface status ethernet " + sport)
     tls.send_taska(tl, "show interface counters ethernet " + sport)
@@ -197,6 +215,8 @@ def cisco_init(tl, sw_ip, port):
 
     gateway = gwp.get_connection(sw_ip)
 
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("CISCO | PORT: " + sport)
@@ -384,6 +404,12 @@ def cisco_init(tl, sw_ip, port):
     interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
 
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
+
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
     link_t.grid(column=40, row=10, sticky='w', padx="5")
@@ -397,12 +423,18 @@ def cisco_init(tl, sw_ip, port):
 def dlink_3200_init(tl, sw_ip, port):
     vendor = vd.Switch.DLINK_3200.name
     tls.login_try(tl, user, password)
-    
+
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
+
     sport = str(port)
     tls.send_taska(tl, "show ports " + sport, vendor)
     tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+    
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("D-LINK-3200 | PORT: " + sport)
@@ -550,6 +582,12 @@ def dlink_3200_init(tl, sw_ip, port):
     cancel_t.grid(column=30, row=20, sticky='w')
     interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
+    
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
@@ -565,11 +603,16 @@ def dlink_3526_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
     vendor = vd.Switch.DLINK_3526.name
     
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
+
     sport = str(port)
     tls.send_taska(tl, "show ports " + sport, vendor)
     tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("D-LINK-3526 | PORT: " + sport)
@@ -732,6 +775,12 @@ def dlink_3526_init(tl, sw_ip, port):
     cancel_t.grid(column=30, row=20, sticky='w')
     interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
+    
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
@@ -748,6 +797,9 @@ def bdcom_init(tl, sw_ip, leaf, port):
     password = "support"
     tls.login_try(tl, user, password)
     time.sleep(1)
+
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
     
     sport = "EPON0/" + str(leaf) + ":" + str(port)
     tl.write("enable".encode('ascii') + b"\r\n")
@@ -756,6 +808,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
     tls.send_taska(tl, "show mac address-table interface " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("BDCOM | " + sport)
@@ -769,7 +823,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
         tls.send_taska(tl, "show epon optical-transceiver-diagnosis interface " + sport)
 
     def epon_reboot():
-        tls.send_taska(tl, "epon reboot onu interface " + sport)
+        tls.send_task(tl, "epon reboot onu interface " + sport)
+        tls.send_taska(tl, "y")
 
     #LINE 2
     def show_all_leaf():
@@ -839,13 +894,18 @@ def bdcom_init(tl, sw_ip, leaf, port):
 def foxgate_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
     time.sleep(1)
+
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
     
-    sport = 'e0/0/' + str(port)
+    sport = '0/0/' + str(port)
     tl.write("enable".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "show interface brief ethernet " + sport)
     tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
 
     gateway = gwp.get_connection(sw_ip)
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
 
     window = tk.Tk()
     window.title("FOXGATE | PORT: " + sport)
@@ -854,7 +914,7 @@ def foxgate_init(tl, sw_ip, port):
     def show_link():
         tls.send_taska(tl, "show interface brief ethernet " + sport)
     def show_statistics():
-        tls.send_taska(tl, "show port " + sport + " statistics")
+        tls.send_taska(tl, "show statistics interface ethernet " + sport)
     def show_mac():
         tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
 
@@ -882,9 +942,9 @@ def foxgate_init(tl, sw_ip, port):
 
     #LINE 2
     def show_log():
-        tls.send_taska(tl, "show logging buffered", 2)
+        tls.send_taska(tl, "show logging buffered", 'default', 2)
     def show_all_down():
-        tls.send_taska(tl, "show interface brief ethernet")
+        tls.send_taska(tl, "show interface brief")
     
     def neigh_port_boot():
         tmp_data = 'e0/0/' + switch_port_data.get()
@@ -982,6 +1042,12 @@ def foxgate_init(tl, sw_ip, port):
     cancel_t.grid(column=30, row=20, sticky='w')
     interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
+    
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
     link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
