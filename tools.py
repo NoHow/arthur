@@ -36,9 +36,6 @@ def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.2, ):
     tmp_answer =  telnet_inst.read_very_eager().decode()
     answer = tmp_answer
 
-
-    #print(answer)
-
     return answer
 
 def clear_garbage(telnet_inst, sleep_time = 0.5):

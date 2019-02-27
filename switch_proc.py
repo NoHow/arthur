@@ -107,6 +107,10 @@ def zte_init(tl, sw_ip, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -194,6 +198,10 @@ def zte_init(tl, sw_ip, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
@@ -318,6 +326,10 @@ def cisco_init(tl, sw_ip, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -416,6 +428,10 @@ def cisco_init(tl, sw_ip, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
@@ -506,6 +522,10 @@ def dlink_3200_init(tl, sw_ip, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -595,6 +615,10 @@ def dlink_3200_init(tl, sw_ip, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.grid(column=45, row=10, sticky='w')
     mac_data.insert(0, "ffff.ffff.ffff")
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
@@ -688,6 +712,10 @@ def dlink_3526_init(tl, sw_ip, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -788,6 +816,10 @@ def dlink_3526_init(tl, sw_ip, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.grid(column=45, row=10, sticky='w')
     mac_data.insert(0, "ffff.ffff.ffff")
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
@@ -847,6 +879,10 @@ def bdcom_init(tl, sw_ip, leaf, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -886,6 +922,10 @@ def bdcom_init(tl, sw_ip, leaf, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
@@ -987,6 +1027,10 @@ def foxgate_init(tl, sw_ip, port):
     #LINE GATEWAY
     def show_arp_by_mac():
         gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
     #LINE 1
     link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
@@ -1055,6 +1099,10 @@ def foxgate_init(tl, sw_ip, port):
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
     gateway['connection'].close()
