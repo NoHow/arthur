@@ -11,8 +11,10 @@ def get_connection(sw_ip):
     vendor = ug.get_gateway_vendor(gw_ip)
 
     if vendor == vd.Gateway.CISCO.name:
-        user = "support"
-        password = "ytyfljkf[vfnbnm,f,eire"
+        user = "duty"
+        password = "support"
+        #user = "support"
+        #password = "ytyfljkf[vfnbnm,f,eire"
     elif vendor == vd.Gateway.ZTE.name or vendor == vd.Gateway.JUNIPER.name:
         user = "duty"
         password = "support"

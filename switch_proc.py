@@ -205,6 +205,8 @@ def zte_init(tl, sw_ip, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
 
 
 #CISCO
@@ -435,6 +437,8 @@ def cisco_init(tl, sw_ip, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
 
 def dlink_3200_init(tl, sw_ip, port):
     vendor = vd.Switch.DLINK_3200.name
@@ -622,6 +626,8 @@ def dlink_3200_init(tl, sw_ip, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
 
 def dlink_3526_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
@@ -823,6 +829,8 @@ def dlink_3526_init(tl, sw_ip, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
 
 def bdcom_init(tl, sw_ip, leaf, port):
     user = "duty"
@@ -901,7 +909,7 @@ def bdcom_init(tl, sw_ip, leaf, port):
     #LINE 2
     int_brief_b = tk.Button(window, text="All leafs", font=("Helvetica", 10), command=show_all_leaf)
     int_brief_b.grid(column=20, row=10, sticky='w')
-    inactive_onu_b = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_inactive_onu)
+    inactive_onu_b = tk.Button(window, text="Show inactive onu", font=("Helvetica", 10), command=show_inactive_onu)
     inactive_onu_b.grid(column=20, row=20, sticky='w')
     lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
     lease_all_t.grid(column=20, row=30, sticky='w')
@@ -929,6 +937,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
 
 #TO DO
 def foxgate_init(tl, sw_ip, port):
@@ -1106,3 +1116,5 @@ def foxgate_init(tl, sw_ip, port):
 
     window.mainloop()
     gateway['connection'].close()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0

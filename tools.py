@@ -10,9 +10,10 @@ class AsyncOutput(threading.Thread):
     def __init__(self, tl_ref):
         threading.Thread.__init__(self)
         self.tl_ref = tl_ref
+        self.tryharding = 1
 
     def run(self):
-        while 1:
+        while self.tryharding:
             text = self.tl_ref.read_eager()
             if text:
                 sys.stdout.write(text.decode('ascii'))
