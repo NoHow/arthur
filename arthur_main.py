@@ -21,10 +21,12 @@ elif switch_name == vd.Switch.LINKSYS.name:
     port = input("Port: ")
     swp.cisco_init(tn_sw, host, port)
 elif switch_name == vd.Switch.RAISECOM.name:
-    print("Sorry, I can't handle raisecom right now")
-elif switch_name == vd.Switch.FOXGATE.name:
     port = input("Port: ")
-    swp.foxgate_init(tn_sw, host, port)
+    swp.raisecom_init(tn_sw, host, port)
+elif switch_name == vd.Switch.FOXGATE.name:
+    print('Sorry, no raisecom right now!')
+    #port = input("Port: ")
+    #swp.foxgate_init(tn_sw, host, port)
 elif switch_name == vd.Switch.DLINK_3200.name:
     port = input("Port: ")
     swp.dlink_3200_init(tn_sw, host, port)

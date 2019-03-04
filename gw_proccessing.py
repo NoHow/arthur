@@ -20,7 +20,7 @@ def get_connection(sw_ip):
         password = "support"
     elif vendor == vd.Gateway.HUAWEI.name:
         user = "duty"
-        password = "support1"
+        password = "support"
     
     tn_gw = tl.Telnet(gw_ip)
     tls.login_try(tn_gw, user, password)

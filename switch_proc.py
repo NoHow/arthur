@@ -53,7 +53,7 @@ def zte_init(tl, sw_ip, port):
 
     def dhcp_on():
         tls.send_taska(tl, "set dhcp snooping-and-option82 enable")
-        tls.send_taska(tl, "set port" + sport + " acl " + sport + " dis")
+        tls.send_taska(tl, "set port " + sport + " acl " + sport + " dis")
         tls.send_taska(tl, "set dhcp port " +  sport + " client")
         tls.send_taska(tl, "set dhcp snooping add port " + sport)
         tls.send_taska(tl, "set dhcp ip-source-guard add port " + sport)
@@ -204,9 +204,9 @@ def zte_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
 
 
 #CISCO
@@ -253,7 +253,7 @@ def cisco_init(tl, sw_ip, port):
         tls.send_task(tl, "shutdown")
         tls.send_taska(tl, "end")
     def port_on():
-        tls.send_task(tl, "configurtion")
+        tls.send_task(tl, "config")
         tls.send_task(tl, "interface ethernet " + sport)
         tls.send_task(tl, "no shutdown")
         tls.send_taska(tl, "end")
@@ -293,7 +293,7 @@ def cisco_init(tl, sw_ip, port):
     def show_all_down():
         tls.send_taska(tl, "show interface config")
     def neigh_port_boot():
-        tls.send_task(tl, "configurtion")
+        tls.send_task(tl, "configur")
         tls.send_taska(tl, "interface ethernet " + 'e' + switch_port_data.get())
         tls.send_taska(tl, "shutdown")
         time.sleep(4)
@@ -436,9 +436,10 @@ def cisco_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
+
 
 def dlink_3200_init(tl, sw_ip, port):
     vendor = vd.Switch.DLINK_3200.name
@@ -625,9 +626,9 @@ def dlink_3200_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
 
 def dlink_3526_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
@@ -756,7 +757,7 @@ def dlink_3526_init(tl, sw_ip, port):
     bind_create_b = tk.Button(window, text="Create bind", font=("Helvetica", 10), command=bind_create)
     bind_create_b.grid(column=10, row=130, sticky='w')
     bind_remove_b = tk.Button(window, text="Remove bind", font=("Helvetica", 10), command=bind_remove)
-    bind_remove_b.grid(column=10, row=130, sticky='w')
+    bind_remove_b.grid(column=15, row=130, sticky='w')
     mac_info_bind = tk.Label(window, text="MAC", font=("Helvetica", 10))
     mac_info_bind.grid(column=10, row=140, sticky='w')
     mac_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
@@ -828,9 +829,9 @@ def dlink_3526_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
 
 def bdcom_init(tl, sw_ip, leaf, port):
     user = "duty"
@@ -936,9 +937,9 @@ def bdcom_init(tl, sw_ip, leaf, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
 
 #TO DO
 def foxgate_init(tl, sw_ip, port):
@@ -1115,6 +1116,12 @@ def foxgate_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     window.mainloop()
-    gateway['connection'].close()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
+    gateway['connection'].close()
+
+#RAISECOM
+def raisecom_init(tl, sw_ip, port):
+    pass
+    
+

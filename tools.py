@@ -14,16 +14,17 @@ class AsyncOutput(threading.Thread):
 
     def run(self):
         while self.tryharding:
-            text = self.tl_ref.read_eager()
+            text = self.tl_ref.read_some()
             if text:
                 sys.stdout.write(text.decode('ascii'))
-                sys.stdout.flush()
+                sys.stdout.flush() 
+                
 
 def send_task(telnet_inst, task):
     telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
     time.sleep(0.1)
 
-def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.2, ):
+def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.1):
     debug_log('task: ' + task)
     debug_log('vendor: ' + vendor)
     if vendor == vd.Switch.RAISECOM.name:
