@@ -876,6 +876,10 @@ def bdcom_init(tl, sw_ip, leaf, port):
         tls.send_taska(tl, "show ip dhcp-relay snooping binding all")
     def show_log():
         tls.send_taska(tl, "show logging", 'default', 2)
+    
+    def enable_mod():
+        tl.write("enable".encode('ascii') + b"\r\n")
+        tl.write("bdcom".encode('ascii') + b"\r\n")
 
     #lINE 3
     def show_more():
@@ -916,6 +920,12 @@ def bdcom_init(tl, sw_ip, leaf, port):
     lease_all_t.grid(column=20, row=30, sticky='w')
     log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
     log_t.grid(column=20, row=40, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=50, sticky='w', pady='0.3m')
+
+    enable_b = tk.Button(window, text="Enable mod", font=("Helvetica", 10), command=enable_mod)
+    enable_b.grid(column=20, row=60, sticky='w', pady='0.3m')
 
     #LINE 3
     more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
