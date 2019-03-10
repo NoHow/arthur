@@ -69,7 +69,7 @@ def show_abon_mac(tn_gw, vendor, mac):
     tmac = tls.transform_mac(mac)
 
     if vendor == vd.Gateway.CISCO.name:
-        tls.send_taska(tn_gw, "show mac address-table " + tmac, 'default', 2)
+        tls.send_taska(tn_gw, "show mac address-table address " + tmac, 'default', 2)
         return 1
     elif vendor == vd.Gateway.ZTE.name:
         tls.send_taska(tn_gw, "show mac " + tmac, 'default', 2)

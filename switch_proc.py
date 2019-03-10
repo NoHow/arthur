@@ -294,10 +294,11 @@ def cisco_init(tl, sw_ip, port):
         tls.send_taska(tl, "show interface config")
     def neigh_port_boot():
         tls.send_task(tl, "configur")
-        tls.send_taska(tl, "interface ethernet " + 'e' + switch_port_data.get())
-        tls.send_taska(tl, "shutdown")
+        tls.send_task(tl, "interface ethernet " + 'e' + switch_port_data.get())
+        tls.send_task(tl, "shutdown")
         time.sleep(4)
-        tls.send_taska(tl, "no shutdown")
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
 
     def set_description():
         description = description_input.get()
