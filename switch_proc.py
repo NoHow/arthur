@@ -1133,8 +1133,6 @@ def foxgate_init(tl, sw_ip, port):
 
 #RAISECOM
 def raisecom_init(tl, sw_ip, port):
-    user = "duty"
-    password = "support"
     tls.login_try(tl, user, password)
     time.sleep(1)
     
@@ -1144,7 +1142,6 @@ def raisecom_init(tl, sw_ip, port):
     sport = str(port)
     tl.write("enable".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "show interface port " + sport)
-    tls.send_taska(tl, "show interface port " + sport + " statistics")
     tls.send_taska(tl, "show mac-address-table l2-address port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
@@ -1170,6 +1167,7 @@ def raisecom_init(tl, sw_ip, port):
         #tls.send_taska(tl, "show ip dhcp snooping binding ethernet " + sport)
     def test_cable():
         tls.send_taska(tl, "test cable-diagnostics port-list " + sport, 'default', 2)
+        time.sleep(0.2)
         tls.send_taska(tl, "show cable-diagnostics port-list " + sport, 'default', 2)
 
     def port_off():
@@ -1198,18 +1196,18 @@ def raisecom_init(tl, sw_ip, port):
         #tls.send_task(tl, "no ip arp inspection trust")
         #tls.send_task(tl, "no ip dhcp snooping trust")
         #tls.send_taska(tl, "end")
-    def static_bind():
-        mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
-        tls.send_taska(tl, "ip source binding " + ip_data_bind.get() + " " + mac_to_bind + "vlan " + vlan_data_bind.get() + " port " + sport)
-        tls.send_taska(tl, "end")
-    def static_bind_remove():
-        mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
-        tls.send_taska(tl, "no ip source binding " + ip_data_bind.get())
-        tls.send_taska(tl, "end")
+    #def static_bind():
+        #mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
+        #tls.send_taska(tl, "ip source binding " + ip_data_bind.get() + " " + mac_to_bind + "vlan " + vlan_data_bind.get() + " port " + sport)
+        #tls.send_taska(tl, "end")
+    #def static_bind_remove():
+        #mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
+        #tls.send_taska(tl, "no ip source binding " + ip_data_bind.get())
+        #tls.send_taska(tl, "end")
 
     #LINE 2
-    #def show_lease_all():
-        #tls.send_taska(tl, "show ip dhcp snooping binding")
+    def show_lease_all():
+        tls.send_taska(tl, "show ip dhcp snooping binding")
     def show_log():
         tls.send_taska(tl, "show logging file", 'default', 2)
     def show_all_down():
@@ -1266,50 +1264,31 @@ def raisecom_init(tl, sw_ip, port):
     #desc_t = tk.Button(window, text="Show desc", font=("Helvetica", 10), command=show_description)
     #desc_t.grid(column=10, row=30, sticky='w')
     stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
-    stat_t.grid(column=10, row=40, sticky='w')
+    stat_t.grid(column=10, row=20, sticky='w')
     mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
-    mac_t.grid(column=10, row=50, sticky='w')
+    mac_t.grid(column=10, row=30, sticky='w')
     #lease_t = tk.Button(window, text="Show lease", font=("Helvetica", 10), command=show_lease)
     #lease_t.grid(column=10, row=60, sticky='w')
     cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
-    cable_t.grid(column=10, row=70, sticky='w')
+    cable_t.grid(column=10, row=40, sticky='w')
 
     line = tk.Label(window, text="-----", font=("Helvetica", 10))
-    line.grid(column=10, row=80, sticky='w', pady='0.3m')
+    line.grid(column=10, row=50, sticky='w', pady='0.3m')
 
     porton_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
-    porton_t.grid(column=10, row=90, sticky='w')
+    porton_t.grid(column=10, row=60, sticky='w')
     portoff_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
-    portoff_t.grid(column=10, row=100, sticky='w')
+    portoff_t.grid(column=10, row=70, sticky='w')
 
-    line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
-    line2.grid(column=10, row=110, sticky='w', pady='0.3m')
+    #line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
+    #line2.grid(column=10, row=110, sticky='w', pady='0.3m')
 
     #dhcp_t = tk.Button(window, text="DHCP config", font=("Helvetica", 10), command=dhcp_on)
     #dhcp_t.grid(column=10, row=120, sticky='w')
-
-    static_bind = tk.Button(window, text="Static bind", font=("Helvetica", 10), command=static_bind)
-    static_bind.grid(column=10, row=130, sticky='w')
-    static_bind_remove = tk.Button(window, text="Delete bind", font=("Helvetica", 10), command=static_bind_remove)
-    static_bind_remove.grid(column=15, row=130, sticky='w')
-    mac_info_bind = tk.Label(window, text="MAC", font=("Helvetica", 10))
-    mac_info_bind.grid(column=10, row=140, sticky='w')
-    mac_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
-    mac_data_bind.grid(column=15, row=140, sticky='w')
-    mac_data_bind.insert(0, "ff:ff:ff:ff:ff:ff")
-    ip_info_bind = tk.Label(window, text="IP", font=("Helvetica", 10))
-    ip_info_bind.grid(column=10, row=150, sticky='w')
-    ip_data_bind = tk.Entry(window, font=("Helvetica", 10), width=15)
-    ip_data_bind.grid(column=15, row=150, sticky='w')
-    ip_data_bind.insert(0, "xxx.xxx.xxx.xxx")
-    vlan_info_bind = tk.Label(window, text="VLAN", font=("Helvetica", 10))
-    vlan_info_bind.grid(column=10, row=160, sticky='w')
-    vlan_data_bind = tk.Spinbox(window, font=("Helvetica", 10), width=5)
-    vlan_data_bind.grid(column=15, row=160, sticky='w')
     
     #LINE 2
-    #lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
-    #lease_all_t.grid(column=20, row=10, sticky='w')
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t.grid(column=20, row=10, sticky='w')
     log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
     log_t.grid(column=20, row=20, sticky='w')
     all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
