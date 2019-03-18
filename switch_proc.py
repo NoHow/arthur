@@ -92,7 +92,7 @@ def zte_init(tl, sw_ip, port):
     def clear_statistics():
         tls.send_taska(tl, "clear port " + sport + " statistics")
 
-    #lINE 3
+    #LINE 3
     def show_more():
         tls.send_taska(tl, " ")
     def cancel():   
@@ -1133,6 +1133,213 @@ def foxgate_init(tl, sw_ip, port):
 
 #RAISECOM
 def raisecom_init(tl, sw_ip, port):
-    pass
+    tls.login_try(tl, user, password)
+    time.sleep(1)
     
+    sw_output = tls.AsyncOutput(tl)
+    sw_output.start()
 
+    sport = str(port)
+    tl.write("enable".encode('ascii') + b"\r\n")
+    tls.send_taska(tl, "show interface port " + sport)
+    tls.send_taska(tl, "show mac-address-table l2-address port " + sport)
+
+    gateway = gwp.get_connection(sw_ip)
+
+    gw_output = tls.AsyncOutput(gateway['connection'])
+    gw_output.start()
+
+    window = tk.Tk()
+    window.title("RAISECOM/ISCOM | PORT: " + sport)
+    
+    #LINE 1
+    def show_link():
+        tls.send_taska(tl, "show interface port " + sport)
+    #def show_admin():
+        #tls.send_taska(tl, "show interface config ethernet " + sport)
+    #def show_description():
+        #tls.send_taska(tl, "show interface description ethernet " + sport)
+    def show_statistics():
+        tls.send_taska(tl, "show interface port " + sport + " statistics")
+    def show_mac():
+        tls.send_taska(tl, "show mac-address-table l2-address port " + sport)
+    #def show_lease():
+        #tls.send_taska(tl, "show ip dhcp snooping binding ethernet " + sport)
+    def test_cable():
+        tls.send_taska(tl, "test cable-diagnostics port-list " + sport, 'default', 2)
+        time.sleep(0.2)
+        tls.send_taska(tl, "show cable-diagnostics port-list " + sport, 'default', 2)
+
+    def port_off():
+        tls.send_task(tl, "interface port " + sport)
+        tls.send_task(tl, "shutdown")
+        tls.send_taska(tl, "end")
+    def port_on():
+        tls.send_task(tl, "interface port " + sport)
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+
+    #DHCP_STATIC_WORK_IN_PROGRESS
+    #def dhcp_on():
+        #tls.send_task(tl, "configure    ")
+        #tls.send_task(tl, "ip dhcp snooping")
+        #tls.send_task(tl, "ip dhcp information option")
+        #tls.send_task(tl, "no ip dhcp snooping database")
+        #tls.send_task(tl, "ip dhcp snooping vlan " + vlan_data_bind.get())
+        #tls.send_task(tl, "ip arp inspection")
+        #tls.send_task(tl, "ip arp inspection validate")
+        #tls.send_task(tl, "ip arp inspection vlan " + vlan_data_bind.get())
+        #tls.send_task(tl, "ip source-guard")
+        #tls.send_task(tl, "configure")
+        #tls.send_task(tl, "interface ethernet" + sport)
+        #tls.send_task(tl, "ip source-guard")
+        #tls.send_task(tl, "no ip arp inspection trust")
+        #tls.send_task(tl, "no ip dhcp snooping trust")
+        #tls.send_taska(tl, "end")
+    #def static_bind():
+        #mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
+        #tls.send_taska(tl, "ip source binding " + ip_data_bind.get() + " " + mac_to_bind + "vlan " + vlan_data_bind.get() + " port " + sport)
+        #tls.send_taska(tl, "end")
+    #def static_bind_remove():
+        #mac_to_bind = tls.transform_mac_2p(mac_data_bind.get())
+        #tls.send_taska(tl, "no ip source binding " + ip_data_bind.get())
+        #tls.send_taska(tl, "end")
+
+    #LINE 2
+    def show_lease_all():
+        tls.send_taska(tl, "show ip dhcp snooping binding")
+    def show_log():
+        tls.send_taska(tl, "show logging file", 'default', 2)
+    def show_all_down():
+        tls.send_taska(tl, "show interface port")
+    def neigh_port_boot():
+        tls.send_task(tl, "interface port " + switch_port_data.get())
+        tls.send_task(tl, "shutdown")
+        time.sleep(4)
+        tls.send_task(tl, "no shutdown")
+        tls.send_taska(tl, "end")
+    #SHOW_CPU_UTILIZATION
+    #def cpu_utilization():
+        #tls.send_task(tl, "show cpu-utilization")
+
+    #SET_DESC function
+    def set_description():
+        description = description_input.get()
+        tls.send_task(tl, "interface port " + sport)
+        tls.send_task(tl, "description " + description)
+        tls.send_taska(tl, "end")
+    #CLEAR_DESC function
+    def clear_description():
+        tls.send_task(tl, "interface port " + sport)
+        tls.send_task(tl, "no description")
+        tls.send_taska(tl, "end")
+    def clear_statistics():
+        tls.send_taska(tl, "clear interface port " + sport + " statistics")
+
+
+    #LINE 3
+    def show_more():
+        tls.send_taska(tl, " ")
+    def cancel():
+        tls.send_taska(tl, "q")
+    def interact():
+        tl.interact()
+
+    def save_config():
+        tls.send_taska(tl, "write")
+
+    #LINE GATEWAY
+    def show_arp_by_mac():
+        gwp.show_arp_by_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_abon_mac():
+        gwp.show_abon_mac(gateway['connection'], gateway['vendor'], mac_data.get())
+    def show_ring():
+        gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
+
+    #LINE 1
+    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t.grid(column=10, row=10, sticky='w')
+    #admin_t = tk.Button(window, text="Show admin", font=("Helvetica", 10), command=show_admin)
+    #admin_t.grid(column=10, row=20, sticky='w')
+    #desc_t = tk.Button(window, text="Show desc", font=("Helvetica", 10), command=show_description)
+    #desc_t.grid(column=10, row=30, sticky='w')
+    stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
+    stat_t.grid(column=10, row=20, sticky='w')
+    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t.grid(column=10, row=30, sticky='w')
+    #lease_t = tk.Button(window, text="Show lease", font=("Helvetica", 10), command=show_lease)
+    #lease_t.grid(column=10, row=60, sticky='w')
+    cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
+    cable_t.grid(column=10, row=40, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=10, row=50, sticky='w', pady='0.3m')
+
+    porton_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
+    porton_t.grid(column=10, row=60, sticky='w')
+    portoff_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
+    portoff_t.grid(column=10, row=70, sticky='w')
+
+    #line2 = tk.Label(window, text="-----", font=("Helvetica", 10))
+    #line2.grid(column=10, row=110, sticky='w', pady='0.3m')
+
+    #dhcp_t = tk.Button(window, text="DHCP config", font=("Helvetica", 10), command=dhcp_on)
+    #dhcp_t.grid(column=10, row=120, sticky='w')
+    
+    #LINE 2
+    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t.grid(column=20, row=10, sticky='w')
+    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t.grid(column=20, row=20, sticky='w')
+    all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
+    all_down_t.grid(column=20, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=40, sticky='w', pady='0.3m')
+
+    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
+    link_t.grid(column=20, row=50, sticky='w')
+    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
+    switch_port_data.grid(column=25, row=50, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=20, row=60, sticky='w', pady='0.3m')
+
+    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b.grid(column=20, row=70, sticky='w')
+    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b.grid(column=25, row=70, sticky='w')
+    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input.grid(column=20, row=80, sticky='w')
+    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b.grid(column=20, row=90, sticky='w')
+
+    #LINE 3
+    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t.grid(column=30, row=10, sticky='w')
+    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t.grid(column=30, row=20, sticky='w')
+    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t.grid(column=30, row=30, sticky='w')
+
+    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line.grid(column=30, row=40, sticky='w', pady='0.3m')
+
+    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b.grid(column=30, row=50, sticky='w')
+
+    #GW LINE
+    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data.insert(0, "ffff.ffff.ffff")
+    mac_data.grid(column=45, row=10, sticky='w')
+    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b.grid(column=40, row=20, sticky='w', padx="5")
+    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
+
+    window.mainloop()
+    sw_output.tryharding = 0
+    gw_output.tryharding = 0
+    gateway['connection'].close()
