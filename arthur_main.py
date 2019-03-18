@@ -32,8 +32,11 @@ elif switch_name == vd.Switch.DLINK_3200.name:
 elif switch_name == vd.Switch.DLINK_3526.name:
     port = input("Port: ")
     swp.dlink_3526_init(tn_sw, host, port)
+elif switch_name == vd.Switch.EDGECORE.name:
+    print("Sorry, i dont know how to handle edgecore yet... ;(")
+    #port = input("Port: ")
 elif switch_name == vd.Switch.BDCOM.name:
-    leaf = input("Leaf: ")
+    leaf = input("Vetka: ")
     onu = input("Onu: ")
     swp.bdcom_init(tn_sw, host, leaf, onu)
 else:
