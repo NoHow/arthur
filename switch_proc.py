@@ -893,6 +893,7 @@ def bdcom_init(tl, sw_ip, leaf, port):
     tl.write("enable".encode('ascii') + b"\r\n")
     tl.write("bdcom".encode('ascii') + b"\r\n")
     tls.send_taska(tl, "show interface " + sport)
+    tls.send_task(tl, " ")
     tls.send_taska(tl, "show mac address-table interface " + sport)
 
     gateway = gwp.get_connection(sw_ip)
@@ -907,6 +908,7 @@ def bdcom_init(tl, sw_ip, leaf, port):
     #LINE 1
     def show_link():
         tls.send_taska(tl, "show interface " + sport)
+        tls.send_task(tl, " ")
     def show_mac():
         tls.send_taska(tl, "show mac address-table interface " + sport)
     def show_zatuhanie():
