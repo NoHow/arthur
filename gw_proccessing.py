@@ -30,7 +30,14 @@ def get_connection(sw_ip):
 
         return {'connection' : tn_gw, 'vendor' : vendor}
     except (sc.exceptions.SNMPError, sc.exceptions.SNMPTimeout):
-        return {'connection' : None, 'vendor' : None}
+        user = "duty"
+        password = "support"
+
+        tn_gw = tl.Telnet(gw_ip)
+        vendor == vd.Gateway.JUNIPER.name
+        tls.login_try(tn_gw, user, password)
+
+        return {'connection' : tn_gw, 'vendor' : vendor}
 
 
 
