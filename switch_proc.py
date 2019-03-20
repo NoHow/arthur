@@ -226,8 +226,10 @@ def zte_init(tl, sw_ip, port):
 
 
     window.mainloop()
+
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 
@@ -449,8 +451,8 @@ def cisco_init(tl, sw_ip, port):
     write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
-    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
@@ -466,7 +468,8 @@ def cisco_init(tl, sw_ip, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 
@@ -662,7 +665,8 @@ def dlink_3200_init(tl, sw_ip, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 def dlink_3526_init(tl, sw_ip, port):
@@ -872,7 +876,8 @@ def dlink_3526_init(tl, sw_ip, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 def bdcom_init(tl, sw_ip, leaf, port):
@@ -980,8 +985,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
     interact_t.grid(column=30, row=30, sticky='w')
 
     #GW LINE
-    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
@@ -997,7 +1002,8 @@ def bdcom_init(tl, sw_ip, leaf, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 #TO DO
@@ -1166,8 +1172,8 @@ def foxgate_init(tl, sw_ip, port):
     write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
-    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
@@ -1183,7 +1189,8 @@ def foxgate_init(tl, sw_ip, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
 
 #RAISECOM
@@ -1385,8 +1392,8 @@ def raisecom_init(tl, sw_ip, port):
     write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
-    link_t = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
-    link_t.grid(column=40, row=10, sticky='w', padx="5")
+    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
     mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
@@ -1402,5 +1409,6 @@ def raisecom_init(tl, sw_ip, port):
 
     window.mainloop()
     sw_output.tryharding = 0
-    gw_output.tryharding = 0
+    if gateway['connection'] is not None:
+        gw_output.tryharding = 0
     gateway['connection'].close()
