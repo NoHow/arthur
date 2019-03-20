@@ -1,4 +1,4 @@
-#! python3
+#! /usr/bin/python3
 import telnetlib as tl
 import time
 import sys

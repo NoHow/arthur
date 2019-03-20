@@ -1,5 +1,6 @@
 import tools as tls
 import tkinter as tk
+from tkinter import ttk
 import time
 import underground as ug
 import gw_proccessing as gwp
@@ -14,6 +15,7 @@ def zte_init(tl, sw_ip, port):
     time.sleep(1)
     
     sport = str(port)
+
     sw_output = tls.AsyncOutput(tl)
     sw_output.start()
 
@@ -25,13 +27,17 @@ def zte_init(tl, sw_ip, port):
     tls.send_taska(tl, "show mac dynamic port " + sport)
     tls.send_taska(tl, "show dhcp snooping binding port " + sport)
 
+
     gateway = gwp.get_connection(sw_ip)
 
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
+
 
     window = tk.Tk()
     window.title("ZTE | PORT: " + sport)
+
     
     #LINE 1
     def show_link():
@@ -112,96 +118,112 @@ def zte_init(tl, sw_ip, port):
     def show_ring():
         gwp.show_ring(gateway['connection'], gateway['vendor'], sw_ip)
 
+    mainframe = ttk.Frame(window)
+    mainframe.grid(column=0, row=0, sticky=(tk.N, tk.W, tk.E, tk.S))
+
     #LINE 1
-    link_t = tk.Button(window, text="Show link", font=("Helvetica", 10), command=show_link)
+    link_t = tk.Button(mainframe, text="Show link", font=("Helvetica", 10), command=show_link)
     link_t.grid(column=10, row=10, sticky='w')
-    stat_t = tk.Button(window, text="Show stat", font=("Helvetica", 10), command=show_statistics)
+    stat_t = tk.Button(mainframe, text="Show stat", font=("Helvetica", 10), command=show_statistics)
     stat_t.grid(column=10, row=20, sticky='w')
-    mac_t = tk.Button(window, text="Show mac", font=("Helvetica", 10), command=show_mac)
+    mac_t = tk.Button(mainframe, text="Show mac", font=("Helvetica", 10), command=show_mac)
     mac_t.grid(column=10, row=30, sticky='w')
-    lease_t = tk.Button(window, text="Show lease", font=("Helvetica", 10), command=show_lease)
+    lease_t = tk.Button(mainframe, text="Show lease", font=("Helvetica", 10), command=show_lease)
     lease_t.grid(column=10, row=40, sticky='w')
-    cable_t = tk.Button(window, text="Cable test", font=("Helvetica", 10), command=test_cable)
+    cable_t = tk.Button(mainframe, text="Cable test", font=("Helvetica", 10), command=test_cable)
     cable_t.grid(column=10, row=50, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=10, row=60, sticky='w', pady='0.3m')
 
-    link_t = tk.Button(window, text="Port on", font=("Helvetica", 10), command=port_on)
+    link_t = tk.Button(mainframe, text="Port on", font=("Helvetica", 10), command=port_on)
     link_t.grid(column=10, row=70, sticky='w')
-    link_t = tk.Button(window, text="Port off", font=("Helvetica", 10), command=port_off)
+    link_t = tk.Button(mainframe, text="Port off", font=("Helvetica", 10), command=port_off)
     link_t.grid(column=10, row=80, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=10, row=90, sticky='w', pady='0.3m')
 
-    dchp_t = tk.Button(window, text="DHCP", font=("Helvetica", 10), command=dhcp_on)
+    dchp_t = tk.Button(mainframe, text="DHCP", font=("Helvetica", 10), command=dhcp_on)
     dchp_t.grid(column=10, row=100, sticky='w')
-    static_t = tk.Button(window, text="STATIC", font=("Helvetica", 10), command=dhcp_off)
+    static_t = tk.Button(mainframe, text="STATIC", font=("Helvetica", 10), command=dhcp_off)
     static_t.grid(column=15, row=100, sticky='w')
 
-    free_space = tk.Label(window, text=" ")
+    free_space = tk.Label(mainframe, text=" ")
     free_space.grid(column=19, row=10, padx='5')
     #LINE 2
-    dhcp_t = tk.Button(window, text="Show dhcp", font=("Helvetica", 10), command=show_dhcp)
+    dhcp_t = tk.Button(mainframe, text="Show dhcp", font=("Helvetica", 10), command=show_dhcp)
     dhcp_t.grid(column=20, row=10, sticky='w')
-    lease_all_t = tk.Button(window, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
+    lease_all_t = tk.Button(mainframe, text="Show lease all", font=("Helvetica", 10), command=show_lease_all)
     lease_all_t.grid(column=20, row=20, sticky='w')
-    log_t = tk.Button(window, text="Show log", font=("Helvetica", 10), command=show_log)
+    log_t = tk.Button(mainframe, text="Show log", font=("Helvetica", 10), command=show_log)
     log_t.grid(column=20, row=30, sticky='w')
-    all_down_t = tk.Button(window, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
+    all_down_t = tk.Button(mainframe, text="Show DOWN", font=("Helvetica", 10), command=show_all_down)
     all_down_t.grid(column=20, row=40, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=20, row=50, sticky='w', pady='0.3m')
 
-    link_t = tk.Button(window, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
+    link_t = tk.Button(mainframe, text="Sosed Port reboot", font=("Helvetica", 10), command=neigh_port_boot)
     link_t.grid(column=20, row=60, sticky='w')
-    switch_port_data = tk.Spinbox(window, from_=1, to=64, font=("Helvetica", 10), width=5)
+    switch_port_data = tk.Spinbox(mainframe, from_=1, to=64, font=("Helvetica", 10), width=5)
     switch_port_data.grid(column=25, row=60, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=20, row=70, sticky='w', pady='0.3m')
 
-    sh_vrs_b = tk.Button(window, text="Show switch", font=("Helvetica", 10), command=show_switch)
+    sh_vrs_b = tk.Button(mainframe, text="Show switch", font=("Helvetica", 10), command=show_switch)
     sh_vrs_b.grid(column=20, row=80, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=20, row=90, sticky='w', pady='0.3m')
 
-    desc_input_b = tk.Button(window, text="Set description", font=("Helvetica", 10), command=set_description)
+    desc_input_b = tk.Button(mainframe, text="Set description", font=("Helvetica", 10), command=set_description)
     desc_input_b.grid(column=20, row=100, sticky='w')
-    desc_clear_b = tk.Button(window, text="Clear description", font=("Helvetica", 10), command=clear_description)
+    desc_clear_b = tk.Button(mainframe, text="Clear description", font=("Helvetica", 10), command=clear_description)
     desc_clear_b.grid(column=25, row=100, sticky='w')
-    description_input = tk.Entry(window, font=("Helvetica", 10), width=15)
+    description_input = tk.Entry(mainframe, font=("Helvetica", 10), width=15)
     description_input.grid(column=20, row=110, sticky='w')
-    clear_counters_b = tk.Button(window, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
+    clear_counters_b = tk.Button(mainframe, text="Clear counters", font=("Helvetica", 10), command=clear_statistics)
     clear_counters_b.grid(column=20, row=120, sticky='w')
 
     #LINE 3
-    more_t = tk.Button(window, text="Show more", font=("Helvetica", 10), command=show_more)
+    more_t = tk.Button(mainframe, text="Show more", font=("Helvetica", 10), command=show_more)
     more_t.grid(column=30, row=10, sticky='w')
-    cancel_t = tk.Button(window, text="Cancel", font=("Helvetica", 10), command=cancel)
+    cancel_t = tk.Button(mainframe, text="Cancel", font=("Helvetica", 10), command=cancel)
     cancel_t.grid(column=30, row=20, sticky='w')
-    interact_t = tk.Button(window, text="Interact", font=("Helvetica", 10), command=interact)
+    interact_t = tk.Button(mainframe, text="Interact", font=("Helvetica", 10), command=interact)
     interact_t.grid(column=30, row=30, sticky='w')
 
-    line = tk.Label(window, text="-----", font=("Helvetica", 10))
+    line = tk.Label(mainframe, text="-----", font=("Helvetica", 10))
     line.grid(column=30, row=40, sticky='w', pady='0.3m')
 
-    write_b = tk.Button(window, text="Save config", font=("Helvetica", 10), command=save_config)
+    write_b = tk.Button(mainframe, text="Save config", font=("Helvetica", 10), command=save_config)
     write_b.grid(column=30, row=50, sticky='w')
 
     #GW LINE
-    arp_bym_b = tk.Button(window, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
+    arp_bym_b = tk.Button(mainframe, text="Show arp", font=("Helvetica", 10), command=show_arp_by_mac)
     arp_bym_b.grid(column=40, row=10, sticky='w', padx="5")
-    mac_data = tk.Entry(window, font=("Helvetica", 10), width=15)
+    mac_data = tk.Entry(mainframe, font=("Helvetica", 10), width=15)
     mac_data.insert(0, "ffff.ffff.ffff")
     mac_data.grid(column=45, row=10, sticky='w')
-    ring_b = tk.Button(window, text="Show ring", font=("Helvetica", 10), command=show_ring)
+    ring_b = tk.Button(mainframe, text="Show ring", font=("Helvetica", 10), command=show_ring)
     ring_b.grid(column=40, row=20, sticky='w', padx="5")
-    abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
+    abon_mac_b = tk.Button(mainframe, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
+    
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
+
+    #outputframe = ttk.Frame(window).grid(column=0, row=1, sticky=(tk.N, tk.W, tk.E, tk.S))
+
+    #out_box = tk.Text(outputframe, state='normal', width=80, height=24, wrap='none')
+    #out_box.grid()
+
+
 
     window.mainloop()
     sw_output.tryharding = 0
@@ -225,8 +247,9 @@ def cisco_init(tl, sw_ip, port):
 
     gateway = gwp.get_connection(sw_ip)
 
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("CISCO | PORT: " + sport)
@@ -436,6 +459,11 @@ def cisco_init(tl, sw_ip, port):
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
     window.mainloop()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
@@ -454,9 +482,10 @@ def dlink_3200_init(tl, sw_ip, port):
     tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
-    
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("D-LINK-3200 | PORT: " + sport)
@@ -626,6 +655,11 @@ def dlink_3200_init(tl, sw_ip, port):
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
     window.mainloop()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
@@ -643,8 +677,10 @@ def dlink_3526_init(tl, sw_ip, port):
     tls.send_taska(tl, "show fdb port " + sport)
 
     gateway = gwp.get_connection(sw_ip)
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("D-LINK-3526 | PORT: " + sport)
@@ -829,6 +865,11 @@ def dlink_3526_init(tl, sw_ip, port):
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
     window.mainloop()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
@@ -850,8 +891,10 @@ def bdcom_init(tl, sw_ip, leaf, port):
     tls.send_taska(tl, "show mac address-table interface " + sport)
 
     gateway = gwp.get_connection(sw_ip)
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("BDCOM | " + sport)
@@ -947,6 +990,11 @@ def bdcom_init(tl, sw_ip, leaf, port):
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
     window.mainloop()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
@@ -966,8 +1014,10 @@ def foxgate_init(tl, sw_ip, port):
     tls.send_taska(tl, "show mac-address-table interface ethernet " + sport)
 
     gateway = gwp.get_connection(sw_ip)
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("FOXGATE | PORT: " + sport)
@@ -1126,6 +1176,11 @@ def foxgate_init(tl, sw_ip, port):
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
+
     window.mainloop()
     sw_output.tryharding = 0
     gw_output.tryharding = 0
@@ -1146,8 +1201,9 @@ def raisecom_init(tl, sw_ip, port):
 
     gateway = gwp.get_connection(sw_ip)
 
-    gw_output = tls.AsyncOutput(gateway['connection'])
-    gw_output.start()
+    if gateway['connection'] is not None:
+        gw_output = tls.AsyncOutput(gateway['connection'])
+        gw_output.start()
 
     window = tk.Tk()
     window.title("RAISECOM/ISCOM | PORT: " + sport)
@@ -1338,6 +1394,11 @@ def raisecom_init(tl, sw_ip, port):
     ring_b.grid(column=40, row=20, sticky='w', padx="5")
     abon_mac_b = tk.Button(window, text="Show mac on GW", font=("Helvetica", 10), command=show_abon_mac)
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
+
+    if gateway['connection'] is None:
+        arp_bym_b['state'] = tk.DISABLED
+        ring_b['state'] = tk.DISABLED
+        abon_mac_b['state'] = tk.DISABLED
 
     window.mainloop()
     sw_output.tryharding = 0

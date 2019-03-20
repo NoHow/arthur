@@ -3,6 +3,7 @@ import re
 import vendors as vd
 import threading
 import sys
+import tkinter
 
 DEBUG = 0
 
@@ -14,11 +15,45 @@ class AsyncOutput(threading.Thread):
 
     def run(self):
         while self.tryharding:
+            try:
+                text = self.tl_ref.read_some()
+                if text:
+                    sys.stdout.write(text.decode('ascii'))
+                    sys.stdout.flush()
+            except (ConnectionResetError, ConnectionAbortedError):
+                self.tryharding = 0
+                print('connection closed')
+
+class AsyncOutputIn(threading.Thread):
+    def __init__(self, tl_ref, obox):
+        threading.Thread.__init__(self)
+        self.tl_ref = tl_ref
+        self.tryharding = 1
+        self.obox = obox
+        self.ftext = ''
+
+    def run(self):
+        while 1:
             text = self.tl_ref.read_some()
-            if text:
-                sys.stdout.write(text.decode('ascii'))
-                sys.stdout.flush() 
+            if self.tryharding:
+                ftext = self.data_processing_for_gui(text.decode('ascii'))
+                #sys.stdout.write(text.decode('ascii'))
+                #sys.stdout.flush()
+                print(repr(ftext))
+                self.obox.insert('end', ftext)
+                self.obox.see('end')
+            else:
+                break
                 
+    def data_processing_for_gui(self, data):
+        procesed_str = ''
+        for c in data:
+            if c == '\x08':
+                self.obox.delete("1.0", 'end')
+            else:
+                procesed_str = procesed_str + c
+
+        return procesed_str
 
 def send_task(telnet_inst, task):
     telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\r\n")
@@ -35,10 +70,10 @@ def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.1):
     elif vendor == 'default':
         telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\n")
     time.sleep(sleep_time)
-    tmp_answer =  telnet_inst.read_very_eager().decode()
-    answer = tmp_answer
+    #tmp_answer =  telnet_inst.read_very_eager().decode()
+    #answer = tmp_answer
 
-    return answer
+    return 1
 
 def clear_garbage(telnet_inst, sleep_time = 0.5):
     time.sleep(sleep_time)
