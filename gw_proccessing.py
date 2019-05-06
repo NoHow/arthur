@@ -13,32 +13,25 @@ def get_connection(sw_ip):
     try:
         vendor = ug.get_gateway_vendor(gw_ip)
 
+        user = "blankuser"
+        password = "blankpassword"
         if vendor == vd.Gateway.CISCO.name:
-            user = "duty"
-            password = "support"
-            #user = "support"
-            #password = "ytyfljkf[vfnbnm,f,eire"
+            user = "blankuser"
+            password = "blankpassword"
         elif vendor == vd.Gateway.ZTE.name or vendor == vd.Gateway.JUNIPER.name:
-            user = "duty"
-            password = "support"
+            user = "blankuser"
+            password = "blankpassword"
         elif vendor == vd.Gateway.HUAWEI.name:
-            user = "duty"
-            password = "support"
+            user = "blankuser"
+            password = "blankpassword"
         
         tn_gw = tl.Telnet(gw_ip)
         tls.login_try(tn_gw, user, password)
 
         return {'connection' : tn_gw, 'vendor' : vendor}
     except (sc.exceptions.SNMPError, sc.exceptions.SNMPTimeout):
-        print('snmp timeout!')
-        user = "duty"
-        password = "support"
 
-        tn_gw = tl.Telnet(gw_ip)
-        vendor = vd.Gateway.JUNIPER.name
-        tls.login_try(tn_gw, user, password)
-
-        return {'connection' : tn_gw, 'vendor' : vendor}
+        return {'connection' : None, 'vendor' : None}
 
 
 

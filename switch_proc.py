@@ -7,8 +7,8 @@ import gw_proccessing as gwp
 import vendors as vd
 
 
-user = "sam"
-password = "osinkii"
+user = "blankuser"
+password = "blankpassword"
 
 def zte_init(tl, sw_ip, port):
     tls.login_try(tl, user, password)
@@ -659,7 +659,6 @@ def dlink_3200_init(tl, sw_ip, port):
     abon_mac_b.grid(column=40, row=30, sticky='w', padx="5")
 
     if gateway['connection'] is None:
-        arp_bym_b['state'] = tk.DISABLED
         ring_b['state'] = tk.DISABLED
         abon_mac_b['state'] = tk.DISABLED
 

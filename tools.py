@@ -37,8 +37,6 @@ class AsyncOutputIn(threading.Thread):
             text = self.tl_ref.read_some()
             if self.tryharding:
                 ftext = self.data_processing_for_gui(text.decode('ascii'))
-                #sys.stdout.write(text.decode('ascii'))
-                #sys.stdout.flush()
                 print(repr(ftext))
                 self.obox.insert('end', ftext)
                 self.obox.see('end')
@@ -70,8 +68,6 @@ def send_taska(telnet_inst, task, vendor = 'default', sleep_time = 0.1):
     elif vendor == 'default':
         telnet_inst.write(b"\r\n" + task.encode('ascii') + b"\n")
     time.sleep(sleep_time)
-    #tmp_answer =  telnet_inst.read_very_eager().decode()
-    #answer = tmp_answer
 
     return 1
 
